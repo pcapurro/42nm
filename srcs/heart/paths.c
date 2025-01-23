@@ -14,7 +14,11 @@ void	getPaths(tInfos* infos, const char** argv)
 	int len = 0;
 
 	for (int i = 0; argv[i] != NULL; i++)
+	{
+		if (argv[i][0] == '-')
+			continue ;
 		len++;
+	}
 
 	infos->paths = malloc(sizeof(char*) * len + 1);
 	if (!infos->paths)
@@ -24,17 +28,21 @@ void	getPaths(tInfos* infos, const char** argv)
 	if (len == 0)
 		getPath(infos);
 
-	for (int i = 0; len > 0 && argv[i] != NULL; i++)
+	for (int i = 0, j = 0; len > 0 && argv[i] != NULL; i++)
 	{
-		infos->paths[i] = getDup(argv[i]);
-		if (!infos->paths[i])
+		if (getStrLen(argv[i]) == 0 || argv[i][0] == '-')
+			continue ;
+
+		infos->paths[j] = getDup(argv[i]);
+		if (!infos->paths[j])
 		{
 			memoryFailed();
-			i--;
-			while (i != -1)
-				free(infos->paths[i]), i--;
+			j--;
+			while (j != -1)
+				free(infos->paths[j]), j--;
 			free(infos->paths);
 			exit(1);
 		}
+		j++;
 	}
 }

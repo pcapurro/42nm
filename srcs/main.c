@@ -18,41 +18,41 @@ void	setToDefault(tInfos* infos)
 
 int	main(const int argc, const char **argv)
 {
-	if (isHelp(argv[1]) == true)
-		printHelp();
+	tInfos	infos;
+
+	setToDefault(&infos);
+
+	getOptions(&infos, argv + 1);
+	getPaths(&infos, argv + 1);
+	getSymbols(&infos);
+
+	if (getArrLen(infos.paths) > 1)
+		readBinaries(&infos);
 	else
-	{
-		tInfos	infos;
+		readBinary(&infos);
 
-		setToDefault(&infos);
-
-		getPaths(&infos, argv + 1);
-		getSymbols(&infos);
-
-		if (getArrLen(infos.paths) > 1)
-			readBinaries(&infos);
-		else
-			readBinary(&infos);
-
-		freeArray(infos.paths);
-		freeArray(infos.binaries);
-	}
+	freeArray(infos.paths);
+	freeArray(infos.binaries);
 
 	return (0);
 }
 
-			// printf("paths: \n");
-			// for (int i = 0; infos.paths[i] != NULL; i++)
-			// 	printf("- %s\n", infos.paths[i]);
-			// printf("\n");
-			// printf("options: \n");
-			// if (infos.debugOnly == true)
-			// 	printf("-a\n");
-			// if (infos.externOnly == true)
-			// 	printf("-g\n");
-			// if (infos.noSort == true)
-			// 	printf("-p\n");
-			// if (infos.reverseSort == true)
-			// 	printf("-r\n");
-			// if (infos.undefinedOnly == true)
-			// 	printf("-u\n");
+	// printf("paths: \n");
+	// for (int i = 0; infos.paths[i] != NULL; i++)
+	// 	printf("- %s\n", infos.paths[i]);
+	// printf("\n");
+	// printf("options: \n");
+	// if (infos.debugOnly == true)
+	// 	printf("-a\n");
+	// if (infos.externOnly == true)
+	// 	printf("-g\n");
+	// if (infos.noSort == true)
+	// 	printf("-p\n");
+	// if (infos.reverseSort == true)
+	// 	printf("-r\n");
+	// if (infos.undefinedOnly == true)
+	// 	printf("-u\n");
+	// if (infos.options == false)
+	// 	printf("none\n");
+
+	// exit(0);

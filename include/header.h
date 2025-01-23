@@ -37,12 +37,19 @@ char*	getJoin(const char* s1, const char* s2, const char* s3);
 int		getStrLen(const char* str);
 
 void	freeArray(char** array);
+bool	isSame(const char* str1, const char* str2);
 
 void	memoryFailed(void);
 void	systemFailed(void);
 
+void	getPath(tInfos* infos);
 void	getPaths(tInfos* infos, const char** argv);
+
+int		addOption(tInfos* infos, const char* argv);
+void	getOptions(tInfos* infos, const char** argv);
+
 void	getSymbols(tInfos* infos);
+
 void	readBinaries(tInfos* infos);
 void	readBinary(tInfos* infos);
 

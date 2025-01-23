@@ -9,6 +9,7 @@ NAME = ft_nm
 SRCS = srcs/main.c \
 	srcs/help.c \
 	srcs/heart/paths.c \
+	srcs/heart/options.c \
 	srcs/heart/read.c \
 	srcs/heart/symbols.c \
 	srcs/tools/tools.c \
