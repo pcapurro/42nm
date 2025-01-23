@@ -30,7 +30,7 @@ void	getPaths(tInfos* infos, const char** argv)
 
 	for (int i = 0, j = 0; len > 0 && argv[i] != NULL; i++)
 	{
-		if (getStrLen(argv[i]) == 0 || argv[i][0] == '-')
+		if (argv[i][0] == '\0' || argv[i][0] == '-')
 			continue ;
 
 		infos->paths[j] = getDup(argv[i]);

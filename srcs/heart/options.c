@@ -24,7 +24,7 @@ void	getOptions(tInfos* infos, const char** argv)
 {
 	for (int i = 0; argv[i] != NULL; i++)
 	{
-		if (argv[i][0] != '-')
+		if (argv[i][0] == '\0' || argv[i][0] != '-')
 			continue ;
 
 		if (isHelp(argv[i]) == true || addOption(infos, argv[i]) == 0)
