@@ -1,9 +1,11 @@
 #include "../../include/header.h"
 
-void	printError(const int value)
+void	memoryFailed(void)
 {
-	if (value == 0)
-	{
-		;
-	}
+	writeStr("Error! Memory allocation failed.\n", 2);
+}
+
+void	systemFailed(void)
+{
+	writeStr("Error! System failed.\n", 2);
 }

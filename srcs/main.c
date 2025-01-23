@@ -5,6 +5,7 @@ void	setToDefault(tInfos* infos)
 	infos->error = 0;
 
 	infos->paths = NULL;
+	infos->binaries = NULL;
 
 	infos->options = false;
 	infos->debugOnly = false;
@@ -17,24 +18,41 @@ void	setToDefault(tInfos* infos)
 
 int	main(const int argc, const char **argv)
 {
-	if (argc <= 1)
-		{ printError(0); return (1); }
+	if (isHelp(argv[1]) == true)
+		printHelp();
 	else
 	{
-		if (isHelp(argv[1]) == true)
-			printHelp();
+		tInfos	infos;
+
+		setToDefault(&infos);
+
+		getPaths(&infos, argv + 1);
+		getSymbols(&infos);
+
+		if (getArrLen(infos.paths) > 1)
+			readBinaries(&infos);
 		else
-		{
-			tInfos	infos;
-
-			setToDefault(&infos);
-
-			getPaths(&infos, argv);
-			getSymbols(&infos);
-
 			readBinary(&infos);
-		}
+
+		freeArray(infos.paths);
+		freeArray(infos.binaries);
 	}
 
 	return (0);
 }
+
+			// printf("paths: \n");
+			// for (int i = 0; infos.paths[i] != NULL; i++)
+			// 	printf("- %s\n", infos.paths[i]);
+			// printf("\n");
+			// printf("options: \n");
+			// if (infos.debugOnly == true)
+			// 	printf("-a\n");
+			// if (infos.externOnly == true)
+			// 	printf("-g\n");
+			// if (infos.noSort == true)
+			// 	printf("-p\n");
+			// if (infos.reverseSort == true)
+			// 	printf("-r\n");
+			// if (infos.undefinedOnly == true)
+			// 	printf("-u\n");

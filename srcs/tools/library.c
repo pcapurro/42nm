@@ -9,7 +9,7 @@ int		getStrLen(const char* str)
 	return (len);
 }
 
-int		getArrLen(const char** str)
+int		getArrLen(char** str)
 {
 	int len = 0;
 	for (int i = 0; str != NULL && str[i] != NULL; i++)
