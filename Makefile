@@ -11,7 +11,9 @@ SRCS = srcs/main.c \
 	srcs/heart/paths.c \
 	srcs/heart/options.c \
 	srcs/heart/read.c \
-	srcs/heart/symbols.c \
+	srcs/heart/symbols/checkers.c \
+	srcs/heart/symbols/getters.c \
+	srcs/heart/symbols/symbols.c \
 	srcs/tools/tools.c \
 	srcs/tools/library.c \
 	srcs/tools/print.c \

@@ -34,7 +34,7 @@ typedef struct sInfos tInfos;
 
 struct sSymbols
 {
-	Elf64_Sym*	symbol;
+	Elf64_Sym*	data;
 	int			link;
 };
 
@@ -67,8 +67,17 @@ void	getPaths(tInfos* infos, const char** argv);
 int		addOption(tInfos* infos, const char* argv);
 void	getOptions(tInfos* infos, const char** argv);
 
+bool	isELF(const char* binary, const long int len);
+
 void	getError(tInfos* infos, const char* message, const int i);
-void	analyze64Binary(tInfos* infos, const char* binary, const long int len, const int i);
+char*	getName(tSymbols* symbol, tStrs* strs);
+char*	getAddress(tSymbols* symbols, tStrs* strs);
+char*	getType(tSymbols* symbols, tStrs* strs);
+
+void	registerBinaryData(const char* binary, tSymbols* symbols, tStrs* strs);
+void	initializeBinaryData(const char* binary, tSymbols** symbols, tStrs** strs);
+void	analyze64Binary(tInfos* infos, const char* binary, const int y);
+
 void	getSymbols(tInfos* infos);
 
 void	readBinaries(tInfos* infos);
