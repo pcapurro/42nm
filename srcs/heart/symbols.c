@@ -24,9 +24,9 @@ void	getError(tInfos* infos, const char* message, const int i)
 
 void	analyze64Binary(tInfos* infos, const char* binary, const long int len, const int i)
 {
-	char**		strs = NULL;
 	Elf64_Ehdr*	header = (Elf64_Ehdr*) binary;
-	Elf64_Sym**	symbols = NULL;
+	tStrs*		strs = NULL;
+	tSymbols*	symbols = NULL;
 
 	int	symLen = 0;
 	int	strsLen = 0;
@@ -42,13 +42,11 @@ void	analyze64Binary(tInfos* infos, const char* binary, const long int len, cons
 			strsLen++;
 	}
 
-	symbols = malloc(sizeof(Elf64_Sym*) * (symLen + 1));
-	for (int i = 0; i != symLen + 1; i++)
-		symbols[i] = NULL;
+	symbols = malloc(sizeof(tSymbols) * (symLen + 1));
+	symbols[symLen].symbol = NULL;
 
-	strs = malloc(sizeof(char*) * (strsLen + 1));
-	for (int i = 0; i != strsLen + 1; i++)
-		strs[i] = NULL;
+	strs = malloc(sizeof(tStrs) * (strsLen + 1));
+	strs[strsLen].str = NULL;
 
 	for (int i = 0, k = 0, j = 0; i != header->e_shnum; i++)
 	{
@@ -59,11 +57,30 @@ void	analyze64Binary(tInfos* infos, const char* binary, const long int len, cons
 		{
 			int	size = section->sh_size / section->sh_entsize;
 			for (int o = 0; o != size; o++, k++)
-				symbols[k] = (Elf64_Sym *) section->sh_offset + (o * section->sh_entsize);
+			{
+				symbols[k].symbol = (Elf64_Sym *) (binary + (section->sh_offset + (o * section->sh_entsize)));
+				symbols[k].link = section->sh_link;
+			}
 		}
 		if (section->sh_type == SHT_STRTAB)
-			strs[j] = (char*) binary + section->sh_offset, j++;
+		{
+			strs[j].str = (char*) binary + section->sh_offset;
+			strs[j].id = i;
+			j++;
+		}
 	}
+
+	// for (int i = 0; symbols[i].symbol != NULL; i++)
+	// {
+	// 	for (int k = 0; strs[k].str != NULL; k++)
+	// 	{
+	// 		if (strs[k].id == symbols[i].link)
+	// 			printf("'%s'\n", strs[k].str + symbols[i].symbol->st_name);
+	// 	}
+	// }
+
+	// exit(0);
+
 }
 
 // Header ELF (Elf64_Ehdr *)

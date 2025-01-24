@@ -32,6 +32,22 @@ struct sInfos
 
 typedef struct sInfos tInfos;
 
+struct sSymbols
+{
+	Elf64_Sym*	symbol;
+	int			link;
+};
+
+typedef struct sSymbols tSymbols;
+
+struct sStrs
+{
+	char*	str;
+	int		id;
+};
+
+typedef struct sStrs tStrs;
+
 int		getArrLen(char** str);
 void	writeStr(const char* str, const int fd);
 char*	getNumber(const int number);
