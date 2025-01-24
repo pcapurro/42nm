@@ -2,8 +2,6 @@
 
 void	setToDefault(tInfos* infos)
 {
-	infos->error = 0;
-
 	infos->paths = NULL;
 	infos->binaries = NULL;
 

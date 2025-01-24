@@ -9,6 +9,8 @@
 # include <stdbool.h>
 # include <errno.h>
 
+# include <elf.h>
+
 # include <sys/mman.h>
 # include <sys/stat.h>
 
@@ -26,8 +28,6 @@ struct sInfos
 	bool	options;
 	char**	paths;
 	char**	binaries;
-
-	int		error;
 };
 
 typedef struct sInfos tInfos;
@@ -52,7 +52,7 @@ int		addOption(tInfos* infos, const char* argv);
 void	getOptions(tInfos* infos, const char** argv);
 
 void	getError(tInfos* infos, const char* message, const int i);
-void	analyzeBinary(tInfos* infos, const char* binary, const long int len, const int i);
+void	analyze64Binary(tInfos* infos, const char* binary, const long int len, const int i);
 void	getSymbols(tInfos* infos);
 
 void	readBinaries(tInfos* infos);
