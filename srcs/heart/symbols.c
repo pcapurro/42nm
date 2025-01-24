@@ -1,11 +1,15 @@
 #include "../../include/header.h"
 
-void	getError(tInfos* infos, const int i)
+void	getError(tInfos* infos, const char* message, const int i)
 {
-	char*	error = NULL;
-	char*	str = NULL;
+	const char*	error = NULL;
+	char*		str = NULL;
 
-	error = strerror(errno);
+	if (message == NULL)
+		error = strerror(errno);
+	else
+		error = message;
+
 	str = getJoin("ft_nm: '", infos->paths[i], "': ");
 	if (!str)
 	{
@@ -18,9 +22,23 @@ void	getError(tInfos* infos, const int i)
 	free(str);
 }
 
-void	analyzeBinary(tInfos* infos, const char* binary, const int i)
+void	analyzeBinary(tInfos* infos, const char* binary, const long int len, const int i)
 {
-	;
+	// for (int i = 0; i != len; i++)
+	// 	printf("'%c'", binary[i]);
+	// printf("\n");
+}
+
+bool	isELF(const char* binary, const long int len)
+{
+	if (len < 4)
+		return (false);
+
+	if (binary[1] == 'E' && binary[2] == 'L' && binary[3] == 'F' \
+		&& binary[0] == 0x7F)
+		return (true);
+
+	return (false);
 }
 
 void	getSymbols(tInfos* infos)
@@ -40,7 +58,7 @@ void	getSymbols(tInfos* infos)
 		fd = open(infos->paths[i], O_RDONLY);
 		if (fd == -1 || fstat(fd, &fileInfos) < 0)
 		{
-			getError(infos, i);
+			getError(infos, NULL, i);
 			if (fd != -1)
 				close(fd);
 			continue ;
@@ -48,9 +66,12 @@ void	getSymbols(tInfos* infos)
 
 		binary = mmap(NULL, fileInfos.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
 		if (binary == MAP_FAILED)
-			{ getError(infos, i); close(fd); continue ; }
+			{ getError(infos, NULL, i); close(fd); continue ; }
 
-		analyzeBinary(infos, binary, i);
+		if (isELF(binary, fileInfos.st_size) == false)
+			{ getError(infos, "file format not recognized", i); close(fd); continue ; }
+
+		analyzeBinary(infos, binary, fileInfos.st_size, i);
 
 		munmap(binary, fileInfos.st_size);
 		close(fd);

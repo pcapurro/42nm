@@ -51,8 +51,8 @@ void	getPaths(tInfos* infos, const char** argv);
 int		addOption(tInfos* infos, const char* argv);
 void	getOptions(tInfos* infos, const char** argv);
 
-void	getError(tInfos* infos, const int i);
-void	analyzeBinary(tInfos* infos, const char* binary, const int i);
+void	getError(tInfos* infos, const char* message, const int i);
+void	analyzeBinary(tInfos* infos, const char* binary, const long int len, const int i);
 void	getSymbols(tInfos* infos);
 
 void	readBinaries(tInfos* infos);
