@@ -7,9 +7,12 @@
 # include <string.h>
 # include <stdio.h>
 # include <stdbool.h>
+# include <errno.h>
 
 # include <sys/mman.h>
 # include <sys/stat.h>
+
+typedef struct stat tStat;
 
 struct sInfos
 {
@@ -48,6 +51,8 @@ void	getPaths(tInfos* infos, const char** argv);
 int		addOption(tInfos* infos, const char* argv);
 void	getOptions(tInfos* infos, const char** argv);
 
+void	getError(tInfos* infos, const int i);
+void	analyzeBinary(tInfos* infos, const char* binary, const int i);
 void	getSymbols(tInfos* infos);
 
 void	readBinaries(tInfos* infos);

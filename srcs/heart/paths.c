@@ -20,7 +20,7 @@ void	getPaths(tInfos* infos, const char** argv)
 		len++;
 	}
 
-	infos->paths = malloc(sizeof(char*) * len + 1);
+	infos->paths = malloc(sizeof(char*) * (len + 1));
 	if (!infos->paths)
 		memoryFailed(), exit(1);
 	infos->paths[len] = NULL;
