@@ -1,6 +1,6 @@
 #include "../../../include/header.h"
 
-bool	isAbsolute(tSymbols* symbol, tStrs* strs)
+static bool	isAbsolute(tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
 
@@ -10,7 +10,7 @@ bool	isAbsolute(tSymbols* symbol, tStrs* strs)
 	return (false);
 }
 
-bool	isBSS(const char* binary, tSymbols* symbol, tStrs* strs)
+static bool	isBSS(const char* binary, tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
 	Elf64_Ehdr*	header = (Elf64_Ehdr*) binary;
@@ -29,7 +29,7 @@ bool	isBSS(const char* binary, tSymbols* symbol, tStrs* strs)
 	return (false);
 }
 
-bool	isCommon(tSymbols* symbol, tStrs* strs)
+static bool	isCommon(tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym	*data = symbol->data;
 
@@ -39,21 +39,21 @@ bool	isCommon(tSymbols* symbol, tStrs* strs)
 	return (false);
 }
 
-bool	isInitialized(const char* binary, tSymbols* symbol, tStrs* strs)
+static bool	isInitialized(const char* binary, tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
 
 	return (false);
 }
 
-bool	isGlobal(tSymbols* symbol, tStrs* strs)
+static bool	isGlobal(tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
 
 	return (false);
 }
 
-bool	isIndirect(tSymbols* symbol, tStrs* strs)
+static bool	isIndirect(tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
 
@@ -63,14 +63,14 @@ bool	isIndirect(tSymbols* symbol, tStrs* strs)
 	return (false);
 }
 
-bool	isDebug(tSymbols* symbol, tStrs* strs)
+static bool	isDebug(tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
 
 	return (false);
 }
 
-bool	isReadMode(const char* binary, tSymbols* symbol, tStrs* strs)
+static bool	isReadMode(const char* binary, tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
 	Elf64_Ehdr*	header = (Elf64_Ehdr*) binary;
@@ -92,21 +92,21 @@ bool	isReadMode(const char* binary, tSymbols* symbol, tStrs* strs)
 	return (false);
 }
 
-bool	isSmall(tSymbols* symbol, tStrs* strs)
+static bool	isSmall(tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
 
 	return (false);
 }
 
-bool	isText(tSymbols* symbol, tStrs* strs)
+static bool	isText(tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
 
 	return (false);
 }
 
-bool	isUndefined(tSymbols* symbol, tStrs* strs)
+static bool	isUndefined(tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
 
@@ -116,7 +116,7 @@ bool	isUndefined(tSymbols* symbol, tStrs* strs)
 	return (false);
 }
 
-bool	isWeakFound(tSymbols* symbol, tStrs* strs)
+static bool	isWeakFound(tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
 
@@ -126,7 +126,7 @@ bool	isWeakFound(tSymbols* symbol, tStrs* strs)
 	return (false);
 }
 
-bool	isWeakNotFound(tSymbols* symbol, tStrs* strs)
+static bool	isWeakNotFound(tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
 
@@ -136,7 +136,7 @@ bool	isWeakNotFound(tSymbols* symbol, tStrs* strs)
 	return (false);
 }
 
-char*	getType(const char* binary, tSymbols* symbol, tStrs* strs)
+char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value)
 {
 	char*		type = NULL;
 
@@ -144,43 +144,43 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs)
 	if (!type)
 		memoryFailed(), exit(1);
 
-	if (isAbsolute(symbol, strs) == true)
+	if (isAbsolute(symbol, strs, value) == true)
 		type[0] = 'A';
 
-	if (isBSS(binary, symbol, strs) == true)
+	if (isBSS(binary, symbol, strs, value) == true)
 		type[0] = 'B';
 
-	if (isCommon(symbol, strs) == true)
+	if (isCommon(symbol, strs, value) == true)
 		type[0] = 'C';
 
-	if (isInitialized(binary, symbol, strs) == true)
+	if (isInitialized(binary, symbol, strs, value) == true)
 		type[0] = 'D';
 
-	if (isGlobal(symbol, strs) == true)
+	if (isGlobal(symbol, strs, value) == true)
 		type[0] = 'G';
 
-	if (isIndirect(symbol, strs) == true)
+	if (isIndirect(symbol, strs, value) == true)
 		type[0] = 'I';
 
-	if (isDebug(symbol, strs) == true)
+	if (isDebug(symbol, strs, value) == true)
 		type[0] = 'N';
 
-	if (isReadMode(binary, symbol, strs) == true)
+	if (isReadMode(binary, symbol, strs, value) == true)
 		type[0] = 'R';
 
-	if (isSmall(symbol, strs) == true)
+	if (isSmall(symbol, strs, value) == true)
 		type[0] = 'S';
 
-	if (isText(symbol, strs) == true)
+	if (isText(symbol, strs, value) == true)
 		type[0] = 'T';
 
-	if (isUndefined(symbol, strs) == true)
+	if (isUndefined(symbol, strs, value) == true)
 		type[0] = 'U';
 
-	if (isWeakFound(symbol, strs) == true)
+	if (isWeakFound(symbol, strs, value) == true)
 		type[0] = 'V';
 
-	if (isWeakNotFound(symbol, strs) == true)
+	if (isWeakNotFound(symbol, strs, value) == true)
 		type[0] = 'W';
 
 	if (((Elf64_Sym *)symbol->data)->st_info >> 4 == STB_LOCAL

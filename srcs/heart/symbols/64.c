@@ -80,8 +80,8 @@ void	analyzeBinary64(tInfos* infos, const char* binary, const int y)
 
 	for (int i = 0; symbols[i].data != NULL; i++)
 	{
-		symbols[i].name = getName(&symbols[i], strs);
-		symbols[i].type = getType(binary, &symbols[i], strs);
+		symbols[i].name = getName(&symbols[i], strs, 64);
+		symbols[i].type = getType(binary, &symbols[i], strs, 64);
 		symbols[i].address = getAddress(&symbols[i], strs, 64);
 	}
 	infos->binaries[y] = symbols;
