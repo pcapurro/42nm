@@ -2,20 +2,22 @@
 
 void	readBinary(tInfos* infos)
 {
-	if (infos->binaries != NULL && infos->binaries[0] != NULL)
+	if (infos->errors[0] != NULL)
+		writeStr(infos->errors[0], 2);
+	else
 	{
-		for (int k = 0; ((tSymbols *)infos->binaries[0])[k].name != NULL; k++)
+		for (int k = 0; ((tSymbols *)infos->binaries[0])[k].end != true; k++)
 		{
-			writeStr(((tSymbols *)infos->binaries[0])[k].address, 1);
-			writeStr(((tSymbols *)infos->binaries[0])[k].type, 1);
-			writeStr(((tSymbols *)infos->binaries[0])[k].name, 1);
+			tSymbols*	symbol = (infos->binaries[0]);
 
-			if (((tSymbols *)infos->binaries[0])[k + 1].name != NULL)
+			writeStr(symbol[k].address, 1);
+			writeStr(symbol[k].type, 1);
+			writeStr(symbol[k].name, 1);
+
+			if (symbol[k + 1].end != true)
 				writeStr("\n", 1);
 		}
 	}
-	else
-		writeStr("'\\0'", 1);
 	writeStr("\n", 1);
 }
 
@@ -26,20 +28,22 @@ void	readBinaries(tInfos* infos)
 		writeStr(infos->paths[i], 1);
 		writeStr(":\n", 1);
 
-		if (infos->binaries != NULL && infos->binaries[i] != NULL)
+		if (infos->errors[i] != NULL)
+			writeStr(infos->errors[i], 2);
+		else
 		{
-			for (int k = 0; ((tSymbols *)infos->binaries[i])[k].name != NULL; k++)
+			for (int k = 0; ((tSymbols *)infos->binaries[i])[k].end != true; k++)
 			{
-				writeStr(((tSymbols *)infos->binaries[i])[k].address, 1);
-				writeStr(((tSymbols *)infos->binaries[0])[k].type, 1);
-				writeStr(((tSymbols *)infos->binaries[i])[k].name, 1);
+				tSymbols*	symbol = (infos->binaries[i]);
 
-				if (((tSymbols *)infos->binaries[i])[k + 1].name != NULL)
+				writeStr(symbol[k].address, 1);
+				writeStr(symbol[k].type, 1);
+				writeStr(symbol[k].name, 1);
+
+				if (symbol[k + 1].end != true)
 					writeStr("\n", 1);
 			}
 		}
-		else
-			writeStr("'\\0'", 1);
 		writeStr("\n", 1);
 
 		if (infos->paths[i + 1] != NULL)

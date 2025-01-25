@@ -21,12 +21,26 @@ void	initializeBinaryData(const char* binary, tSymbols** symbols, tStrs** strs)
 	(*symbols) = malloc(sizeof(tSymbols) * (symLen + 1));
 	if (!(*symbols))
 		memoryFailed(), exit(1);
-	(*symbols)[symLen].data = NULL;
+	for (int i = 0; i != symLen + 1; i++)
+	{
+		(*symbols)[i].data = NULL;
+		(*symbols)[i].link = 0;
 
-	(*strs) = malloc(sizeof(tStrs) * (strsLen + 1));
+		(*symbols)[i].address = NULL;
+		(*symbols)[i].type = NULL;
+		(*symbols)[i].name = NULL;
+		(*symbols)[i].end = false;
+	}
+	(*symbols)[symLen].end = true;
+
+	(*strs) = malloc(sizeof(tStrs) * strsLen);
 	if (!(*strs))
 		memoryFailed(), exit(1);
-	(*strs)[strsLen].str = NULL;
+	for (int i = 0; i != strsLen; i++)
+	{
+		(*strs)[i].str = NULL;
+		(*strs)[i].id = 0;
+	}
 }
 
 void	registerBinaryData(const char* binary, tSymbols* symbols, tStrs* strs)
@@ -67,8 +81,8 @@ void	analyze64Binary(tInfos* infos, const char* binary, const int y)
 	for (int i = 0; symbols[i].data != NULL; i++)
 	{
 		symbols[i].name = getName(&symbols[i], strs);
-		symbols[i].type = getType(symbols, strs);
-		symbols[i].address = getAddress(symbols, strs);
+		symbols[i].type = getType(&symbols[i], strs);
+		symbols[i].address = getAddress(&symbols[i], strs, 64);
 	}
 	infos->binaries[y] = symbols;
 }
@@ -82,6 +96,17 @@ void	initializeSymbols(tInfos* infos)
 		{ memoryFailed(); freeArray(infos->paths); exit(1); }
 	for (int i = 0; i != len + 1; i++)
 		infos->binaries[i] = NULL;
+
+	infos->errors = malloc(sizeof(char*) * (len + 1));
+	if (!infos->errors)
+	{
+		memoryFailed();
+		freeArray(infos->paths);
+		// freeArray(infos->binaries);
+		exit(1);
+	}
+	for (int i = 0; i != len + 1; i++)
+		infos->errors[i] = NULL;
 }
 
 void	getSymbols(tInfos* infos)

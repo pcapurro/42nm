@@ -11,15 +11,9 @@ void	getError(tInfos* infos, const char* message, const int i)
 		error = message;
 
 	str = getJoin("ft_nm: '", infos->paths[i], "': ");
-	if (!str)
-	{
-		memoryFailed();
-		freeArray(infos->paths);
-		// freeArray(infos->binaries);
-		exit(1);
-	}
-	infos->binaries[i] = getJoin(str, error, "\0");
-	free(str);
+	str = getJoin(str, error, "\0");
+
+	infos->errors[i] = str;
 }
 
 char*	getName(tSymbols* symbol, tStrs* strs)
@@ -35,12 +29,50 @@ char*	getName(tSymbols* symbol, tStrs* strs)
 	return (name);
 }
 
-char*	getAddress(tSymbols* symbols, tStrs* strs)
+char*	getAddress(tSymbols* symbol, tStrs* strs, const int value)
 {
-	return ("000000000000290c ");
+	int		len = 0;
+	int		number = 0;
+	char*	str = NULL;
+
+	if (value == 32)
+		number = ((Elf32_Sym *)(*symbol).data)->st_value, len = 8;
+	if (value == 64)
+		number = ((Elf64_Sym *)(*symbol).data)->st_value, len = 16;
+
+	str = malloc(sizeof(char) * (len + 2));
+	if (!str)
+		return (NULL);
+
+	str[len + 1] = '\0';
+
+	if (number <= 0)
+	{
+		for (int i = 0; i != len + 1; i++)
+			str[i] = ' ';
+		return (str);
+	}
+
+	for (int i = 0; i != len; i++)
+		str[i] = '0';
+	str[len] = ' ';
+
+	int k = len - 1;
+	while (k != -1 && number > 9)
+	{
+		if (number % 16 > 9)
+			str[k] = "0123456789abcdef"[number % 16];
+		else
+			str[k] = (number % 16) + 48;
+		number = number / 16;
+		k--;
+	}
+	str[k] = (number % 16) + 48;
+
+	return (str);
 }
 
-char*	getType(tSymbols* symbols, tStrs* strs)
+char*	getType(tSymbols* symbol, tStrs* strs)
 {
 	return ("C ");
 }

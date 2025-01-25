@@ -18,19 +18,19 @@ typedef struct stat tStat;
 
 struct sInfos
 {
-	bool	debugOnly;
-	bool	externOnly;
-	bool	undefinedOnly;
+	bool		debugOnly;
+	bool		externOnly;
+	bool		undefinedOnly;
 
-	bool	noSort;
-	bool	reverseSort;
+	bool		noSort;
+	bool		reverseSort;
 
-	bool	options;
-	char**	paths;
-	void**	binaries;
+	bool		options;
+	char**		paths;
+	void**		binaries;
+
+	char**		errors;
 };
-
-typedef struct sInfos tInfos;
 
 struct sSymbols
 {
@@ -40,9 +40,8 @@ struct sSymbols
 
 	void*	data;
 	int		link;
+	bool	end;
 };
-
-typedef struct sSymbols tSymbols;
 
 struct sStrs
 {
@@ -50,6 +49,8 @@ struct sStrs
 	int		id;
 };
 
+typedef struct sInfos tInfos;
+typedef struct sSymbols tSymbols;
 typedef struct sStrs tStrs;
 
 int		getArrLen(char** str);
@@ -58,6 +59,8 @@ char*	getNumber(const int number);
 char*	getDup(const char* str);
 char*	getJoin(const char* s1, const char* s2, const char* s3);
 int		getStrLen(const char* str);
+
+char*	getHex(int number, const int value);
 
 void	freeArray(char** array);
 bool	isSame(const char* str1, const char* str2);
@@ -75,8 +78,8 @@ bool	isELF(const char* binary, const long int len);
 
 void	getError(tInfos* infos, const char* message, const int i);
 char*	getName(tSymbols* symbol, tStrs* strs);
-char*	getAddress(tSymbols* symbols, tStrs* strs);
-char*	getType(tSymbols* symbols, tStrs* strs);
+char*	getAddress(tSymbols* symbol, tStrs* strs, const int value);
+char*	getType(tSymbols* symbol, tStrs* strs);
 
 void	registerBinaryData(const char* binary, tSymbols* symbols, tStrs* strs);
 void	initializeBinaryData(const char* binary, tSymbols** symbols, tStrs** strs);
