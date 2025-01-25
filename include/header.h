@@ -79,7 +79,7 @@ bool	isELF(const char* binary, const long int len);
 void	getError(tInfos* infos, const char* message, const int i);
 char*	getName(tSymbols* symbol, tStrs* strs);
 char*	getAddress(tSymbols* symbol, tStrs* strs, const int value);
-char*	getType(tSymbols* symbol, tStrs* strs);
+char*	getType(const char* binary, tSymbols* symbol, tStrs* strs);
 
 void	registerBinary32(const char* binary, tSymbols* symbols, tStrs* strs);
 void	initializeBinary32(const char* binary, tSymbols** symbols, tStrs** strs);
