@@ -1,90 +1,31 @@
 #include "../../../include/header.h"
 
-void	initializeBinaryData(const char* binary, tSymbols** symbols, tStrs** strs)
+void	getError(tInfos* infos, const char* message, const int i)
 {
-	int	symLen = 0;
-	int	strsLen = 0;
+	const char*	error = NULL;
+	char*		str = NULL;
 
-	Elf64_Ehdr*	header = (Elf64_Ehdr*) binary;
+	if (message == NULL)
+		error = strerror(errno);
+	else
+		error = message;
 
-	for (int i = 0; i != header->e_shnum; i++)
-	{
-		const void*	addr = binary + header->e_shoff + (i * header->e_shentsize);
-		Elf64_Shdr*	section = (Elf64_Shdr*)addr;
+	str = getJoin("ft_nm: '", infos->paths[i], "': ");
+	str = getJoin(str, error, "\0");
 
-		if (section->sh_type == SHT_SYMTAB)
-			symLen += (section->sh_size - 1) / section->sh_entsize;
-		if (section->sh_type == SHT_STRTAB)
-			strsLen++;
-	}
-
-	(*symbols) = malloc(sizeof(tSymbols) * (symLen + 1));
-	if (!(*symbols))
-		memoryFailed(), exit(1);
-	for (int i = 0; i != symLen + 1; i++)
-	{
-		(*symbols)[i].data = NULL;
-		(*symbols)[i].link = 0;
-
-		(*symbols)[i].address = NULL;
-		(*symbols)[i].type = NULL;
-		(*symbols)[i].name = NULL;
-		(*symbols)[i].end = false;
-	}
-	(*symbols)[symLen].end = true;
-
-	(*strs) = malloc(sizeof(tStrs) * strsLen);
-	if (!(*strs))
-		memoryFailed(), exit(1);
-	for (int i = 0; i != strsLen; i++)
-	{
-		(*strs)[i].str = NULL;
-		(*strs)[i].id = 0;
-	}
+	infos->errors[i] = str;
 }
 
-void	registerBinaryData(const char* binary, tSymbols* symbols, tStrs* strs)
+bool	isELF(const char* binary, const long int len)
 {
-	Elf64_Ehdr*	header = (Elf64_Ehdr*) binary;
+	if (len < 21)
+		return (false);
 
-	for (int i = 0, j = 0, k = 0; i != header->e_shnum; i++)
-	{
-		const void*	addr = binary + header->e_shoff + (i * header->e_shentsize);
-		Elf64_Shdr*	section = (Elf64_Shdr*)addr;
+	if (binary[1] == 'E' && binary[2] == 'L' && binary[3] == 'F' \
+		&& binary[0] == 0x7F)
+		return (true);
 
-		if (section->sh_type == SHT_SYMTAB)
-		{
-			for (int l = 1; l != section->sh_size / section->sh_entsize; l++)
-			{
-				symbols[k].data = (Elf64_Sym *) (binary + section->sh_offset + l * section->sh_entsize);
-				symbols[k].link = section->sh_link;
-				k++;
-			}
-		}
-		if (section->sh_type == SHT_STRTAB)
-		{
-			strs[j].id = i;
-			strs[j].str = ((char*) binary) + section->sh_offset;
-			j++;
-		}
-	}
-}
-
-void	analyze64Binary(tInfos* infos, const char* binary, const int y)
-{
-	tStrs*		strs = NULL;
-	tSymbols*	symbols = NULL;
-
-	initializeBinaryData(binary, &symbols, &strs);
-	registerBinaryData(binary, symbols, strs);
-
-	for (int i = 0; symbols[i].data != NULL; i++)
-	{
-		symbols[i].name = getName(&symbols[i], strs);
-		symbols[i].type = getType(&symbols[i], strs);
-		symbols[i].address = getAddress(&symbols[i], strs, 64);
-	}
-	infos->binaries[y] = symbols;
+	return (false);
 }
 
 void	initializeSymbols(tInfos* infos)
@@ -132,7 +73,9 @@ void	getSymbols(tInfos* infos)
 			{ getError(infos, "file format not recognized", i); close(fd); continue ; }
 
 		if (binary[4] == 2)
-			analyze64Binary(infos, binary, i);
+			analyzeBinary64(infos, binary, i);
+		else
+			analyzeBinary32(infos, binary, i);
 
 		munmap(binary, fileInfos.st_size);
 		close(fd);

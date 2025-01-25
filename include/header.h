@@ -81,9 +81,13 @@ char*	getName(tSymbols* symbol, tStrs* strs);
 char*	getAddress(tSymbols* symbol, tStrs* strs, const int value);
 char*	getType(tSymbols* symbol, tStrs* strs);
 
-void	registerBinaryData(const char* binary, tSymbols* symbols, tStrs* strs);
-void	initializeBinaryData(const char* binary, tSymbols** symbols, tStrs** strs);
-void	analyze64Binary(tInfos* infos, const char* binary, const int y);
+void	registerBinary32(const char* binary, tSymbols* symbols, tStrs* strs);
+void	initializeBinary32(const char* binary, tSymbols** symbols, tStrs** strs);
+void	analyzeBinary32(tInfos* infos, const char* binary, const int y);
+
+void	registerBinary64(const char* binary, tSymbols* symbols, tStrs* strs);
+void	initializeBinary64(const char* binary, tSymbols** symbols, tStrs** strs);
+void	analyzeBinary64(tInfos* infos, const char* binary, const int y);
 
 void	getSymbols(tInfos* infos);
 

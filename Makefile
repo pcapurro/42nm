@@ -11,8 +11,11 @@ SRCS = srcs/main.c \
 	srcs/heart/paths.c \
 	srcs/heart/options.c \
 	srcs/heart/read.c \
-	srcs/heart/symbols/checkers.c \
-	srcs/heart/symbols/getters.c \
+	srcs/heart/symbols/64.c \
+	srcs/heart/symbols/32.c \
+	srcs/heart/symbols/address.c \
+	srcs/heart/symbols/type.c \
+	srcs/heart/symbols/name.c \
 	srcs/heart/symbols/symbols.c \
 	srcs/tools/tools.c \
 	srcs/tools/library.c \
