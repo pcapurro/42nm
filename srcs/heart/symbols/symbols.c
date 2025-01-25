@@ -58,37 +58,26 @@ void	registerBinaryData(const char* binary, tSymbols* symbols, tStrs* strs)
 
 void	analyze64Binary(tInfos* infos, const char* binary, const int y)
 {
-	char*		str = NULL, *symbol = NULL;
 	tStrs*		strs = NULL;
 	tSymbols*	symbols = NULL;
 
 	initializeBinaryData(binary, &symbols, &strs);
 	registerBinaryData(binary, symbols, strs);
 
-	str = getDup("");
-	if (!str)
-		memoryFailed(), exit(1);
-
 	for (int i = 0; symbols[i].data != NULL; i++)
 	{
-		symbol = getJoin(getAddress(symbols, strs), \
-			getType(symbols, strs), getName(&symbols[i], strs));
-
-		if (symbols[i + 1].data != NULL)
-			str = getJoin(str, symbol, "\n");
-		else
-			str = getJoin(str, symbol, "\0");
-		
-		free(symbol);
+		symbols[i].name = getName(&symbols[i], strs);
+		symbols[i].type = getType(symbols, strs);
+		symbols[i].address = getAddress(symbols, strs);
 	}
-	infos->binaries[y] = str;
+	infos->binaries[y] = symbols;
 }
 
 void	initializeSymbols(tInfos* infos)
 {
 	int	len = getArrLen(infos->paths);
 
-	infos->binaries = malloc(sizeof(char*) * (len + 1));
+	infos->binaries = malloc(sizeof(void*) * (len + 1));
 	if (!infos->binaries)
 		{ memoryFailed(); freeArray(infos->paths); exit(1); }
 	for (int i = 0; i != len + 1; i++)

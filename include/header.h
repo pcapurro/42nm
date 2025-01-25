@@ -27,15 +27,19 @@ struct sInfos
 
 	bool	options;
 	char**	paths;
-	char**	binaries;
+	void**	binaries;
 };
 
 typedef struct sInfos tInfos;
 
 struct sSymbols
 {
-	Elf64_Sym*	data;
-	int			link;
+	char*	name;
+	char*	type;
+	char*	address;
+
+	void*	data;
+	int		link;
 };
 
 typedef struct sSymbols tSymbols;

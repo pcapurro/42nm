@@ -15,7 +15,7 @@ void	getError(tInfos* infos, const char* message, const int i)
 	{
 		memoryFailed();
 		freeArray(infos->paths);
-		freeArray(infos->binaries);
+		// freeArray(infos->binaries);
 		exit(1);
 	}
 	infos->binaries[i] = getJoin(str, error, "\0");
@@ -29,7 +29,7 @@ char*	getName(tSymbols* symbol, tStrs* strs)
 	for (int i = 0; strs[i].str != NULL; i++)
 	{
 		if (strs[i].id == (*symbol).link)
-			name = strs[i].str + (*symbol).data->st_name;
+			name = getDup(strs[i].str + ((Elf64_Sym *)(*symbol).data)->st_name);
 	}
 
 	return (name);
@@ -42,7 +42,7 @@ char*	getAddress(tSymbols* symbols, tStrs* strs)
 
 char*	getType(tSymbols* symbols, tStrs* strs)
 {
-	return ("T ");
+	return ("C ");
 }
 
 // Header ELF (Elf64_Ehdr *)

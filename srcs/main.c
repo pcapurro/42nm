@@ -30,7 +30,7 @@ int	main(const int argc, const char **argv)
 		readBinary(&infos);
 
 	freeArray(infos.paths);
-	freeArray(infos.binaries);
+	// freeArray(infos.binaries);
 
 	return (0);
 }

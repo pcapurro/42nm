@@ -3,7 +3,17 @@
 void	readBinary(tInfos* infos)
 {
 	if (infos->binaries != NULL && infos->binaries[0] != NULL)
-		writeStr(infos->binaries[0], 1);
+	{
+		for (int k = 0; ((tSymbols *)infos->binaries[0])[k].name != NULL; k++)
+		{
+			writeStr(((tSymbols *)infos->binaries[0])[k].address, 1);
+			writeStr(((tSymbols *)infos->binaries[0])[k].type, 1);
+			writeStr(((tSymbols *)infos->binaries[0])[k].name, 1);
+
+			if (((tSymbols *)infos->binaries[0])[k + 1].name != NULL)
+				writeStr("\n", 1);
+		}
+	}
 	else
 		writeStr("'\\0'", 1);
 	writeStr("\n", 1);
@@ -17,7 +27,17 @@ void	readBinaries(tInfos* infos)
 		writeStr(":\n", 1);
 
 		if (infos->binaries != NULL && infos->binaries[i] != NULL)
-			writeStr(infos->binaries[i], 1);
+		{
+			for (int k = 0; ((tSymbols *)infos->binaries[i])[k].name != NULL; k++)
+			{
+				writeStr(((tSymbols *)infos->binaries[i])[k].address, 1);
+				writeStr(((tSymbols *)infos->binaries[0])[k].type, 1);
+				writeStr(((tSymbols *)infos->binaries[i])[k].name, 1);
+
+				if (((tSymbols *)infos->binaries[i])[k + 1].name != NULL)
+					writeStr("\n", 1);
+			}
+		}
 		else
 			writeStr("'\\0'", 1);
 		writeStr("\n", 1);
