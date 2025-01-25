@@ -13,7 +13,7 @@ void	initializeBinaryData(const char* binary, tSymbols** symbols, tStrs** strs)
 		Elf64_Shdr*	section = (Elf64_Shdr*)addr;
 
 		if (section->sh_type == SHT_SYMTAB)
-			symLen += section->sh_size / section->sh_entsize;
+			symLen += (section->sh_size - 1) / section->sh_entsize;
 		if (section->sh_type == SHT_STRTAB)
 			strsLen++;
 	}
@@ -54,9 +54,9 @@ void	registerBinaryData(const char* binary, tSymbols* symbols, tStrs* strs)
 
 		if (section->sh_type == SHT_SYMTAB)
 		{
-			for (int l = 0; l != section->sh_size / section->sh_entsize; l++)
+			for (int l = 1; l != section->sh_size / section->sh_entsize; l++)
 			{
-				symbols[k].data = (Elf64_Sym *) (binary + (section->sh_offset + (l * section->sh_entsize)));
+				symbols[k].data = (Elf64_Sym *) (binary + section->sh_offset + l * section->sh_entsize);
 				symbols[k].link = section->sh_link;
 				k++;
 			}
