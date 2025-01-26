@@ -60,9 +60,9 @@ char*	getDup(const char* str);
 char*	getJoin(const char* s1, const char* s2, const char* s3);
 int		getStrLen(const char* str);
 
-char*	getHex(int number, const int value);
-
 void	freeArray(char** array);
+void	freeBinaries(void** binaries);
+
 bool	isSame(const char* str1, const char* str2);
 
 void	memoryFailed(void);
@@ -93,9 +93,7 @@ void	analyzeBinary64(tInfos* infos, const char* binary, const int y);
 void	getSymbols(tInfos* infos);
 
 void	reOrderSymbols(tInfos* infos);
-
-void	readBinaries(tInfos* infos);
-void	readBinary(tInfos* infos);
+void	listSymbols(tInfos* infos);
 
 void	setToDefault(tInfos* infos);
 

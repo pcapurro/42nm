@@ -22,38 +22,15 @@ int	main(const int argc, const char **argv)
 
 	getOptions(&infos, argv + 1);
 	getPaths(&infos, argv + 1);
-	getSymbols(&infos);
 
+	getSymbols(&infos);
 	if (infos.options == true)
 		reOrderSymbols(&infos);
 
-	if (getArrLen(infos.paths) > 1)
-		readBinaries(&infos);
-	else
-		readBinary(&infos);
+	listSymbols(&infos);
 
 	freeArray(infos.paths);
-	// freeArray(infos.binaries);
+	freeBinaries(infos.binaries);
 
 	return (0);
 }
-
-	// printf("paths: \n");
-	// for (int i = 0; infos.paths[i] != NULL; i++)
-	// 	printf("- %s\n", infos.paths[i]);
-	// printf("\n");
-	// printf("options: \n");
-	// if (infos.debugOnly == true)
-	// 	printf("-a\n");
-	// if (infos.externOnly == true)
-	// 	printf("-g\n");
-	// if (infos.noSort == true)
-	// 	printf("-p\n");
-	// if (infos.reverseSort == true)
-	// 	printf("-r\n");
-	// if (infos.undefinedOnly == true)
-	// 	printf("-u\n");
-	// if (infos.options == false)
-	// 	printf("none\n");
-
-	// exit(0);

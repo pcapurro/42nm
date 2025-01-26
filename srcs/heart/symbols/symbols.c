@@ -43,7 +43,7 @@ void	initializeSymbols(tInfos* infos)
 	{
 		memoryFailed();
 		freeArray(infos->paths);
-		// freeArray(infos->binaries);
+		freeBinaries(infos->binaries);
 		exit(1);
 	}
 	for (int i = 0; i != len + 1; i++)
