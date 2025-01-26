@@ -50,3 +50,11 @@ int	main(const int argc, const char **argv)
 
 	return (0);
 }
+
+// options:
+// -a x
+// -g x
+// -p v
+// -r v
+// -u v
+// -h v

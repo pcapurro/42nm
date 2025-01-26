@@ -193,7 +193,7 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 		type[0] = 'V';
 
 	if (isWeak(symbol, strs, value) == true)
-		type[0] = 'W'; //
+		type[0] = 'W'; // v
 
 	if (type[0] != '-' && isLocal(symbol, strs, value) == true)
 		type[0] += 32;
