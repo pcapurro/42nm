@@ -1,4 +1,4 @@
-#include "../../include/header.h"
+#include "../../../include/header.h"
 
 void	readBinary(tInfos* infos)
 {
@@ -35,6 +35,13 @@ void	readBinaries(tInfos* infos)
 			for (int k = 0; ((tSymbols *)infos->binaries[i])[k].end != true; k++)
 			{
 				tSymbols*	symbol = (infos->binaries[i]);
+
+				if (infos->undefinedOnly == true \
+					&& symbol[k].type[0] != 'U' && symbol[k].type[0] != 'u')
+					continue ;
+
+				if (infos->externOnly == true && symbol[k].type[0] > 96)
+					continue ;
 
 				writeStr(symbol[k].address, 1);
 				writeStr(symbol[k].type, 1);

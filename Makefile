@@ -10,7 +10,8 @@ SRCS = srcs/main.c \
 	srcs/help.c \
 	srcs/heart/paths.c \
 	srcs/heart/options.c \
-	srcs/heart/read.c \
+	srcs/heart/read/read.c \
+	srcs/heart/read/order.c \
 	srcs/heart/symbols/64.c \
 	srcs/heart/symbols/32.c \
 	srcs/heart/symbols/address.c \

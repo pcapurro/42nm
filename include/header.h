@@ -92,6 +92,8 @@ void	analyzeBinary64(tInfos* infos, const char* binary, const int y);
 
 void	getSymbols(tInfos* infos);
 
+void	reOrderSymbols(tInfos* infos);
+
 void	readBinaries(tInfos* infos);
 void	readBinary(tInfos* infos);
 
