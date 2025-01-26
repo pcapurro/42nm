@@ -9,10 +9,10 @@ int		getStrLen(const char* str)
 	return (len);
 }
 
-int		getArrLen(char** str)
+int		getArrLen(void** array)
 {
 	int len = 0;
-	for (int i = 0; str != NULL && str[i] != NULL; i++)
+	for (int i = 0; array != NULL && array[i] != NULL; i++)
 		len++;
 
 	return (len);

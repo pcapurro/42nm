@@ -24,8 +24,6 @@ int	main(const int argc, const char **argv)
 	getPaths(&infos, argv + 1);
 
 	getSymbols(&infos);
-	if (infos.options == true)
-		reOrderSymbols(&infos);
 
 	listSymbols(&infos);
 

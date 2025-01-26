@@ -30,7 +30,7 @@ bool	isELF(const char* binary, const long int len)
 
 void	initializeSymbols(tInfos* infos)
 {
-	int	len = getArrLen(infos->paths);
+	int	len = getArrLen((void*)infos->paths);
 
 	infos->binaries = malloc(sizeof(void*) * (len + 1));
 	if (!infos->binaries)

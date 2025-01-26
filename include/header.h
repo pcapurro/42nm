@@ -53,7 +53,7 @@ typedef struct sInfos tInfos;
 typedef struct sSymbols tSymbols;
 typedef struct sStrs tStrs;
 
-int		getArrLen(char** str);
+int		getArrLen(void** array);
 void	writeStr(const char* str, const int fd);
 char*	getNumber(const int number);
 char*	getDup(const char* str);
@@ -92,7 +92,8 @@ void	analyzeBinary64(tInfos* infos, const char* binary, const int y);
 
 void	getSymbols(tInfos* infos);
 
-void	reOrderSymbols(tInfos* infos);
+void	orderSymbols(void** symbols);
+void	reverseSymbols(void** symbols);
 void	listSymbols(tInfos* infos);
 
 void	setToDefault(tInfos* infos);
