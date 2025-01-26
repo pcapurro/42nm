@@ -40,6 +40,7 @@ struct sSymbols
 
 	void*	data;
 	int		link;
+
 	bool	end;
 };
 
@@ -47,6 +48,8 @@ struct sStrs
 {
 	char*	str;
 	int		id;
+	
+	bool	end;
 };
 
 typedef struct sInfos tInfos;
@@ -97,6 +100,7 @@ void	reverseSymbols(void** symbols);
 void	listSymbols(tInfos* infos);
 
 void	setToDefault(tInfos* infos);
+void	setToNull(tInfos* infos);
 
 void	printHelp(void);
 bool	isHelp(const char* str);

@@ -4,7 +4,7 @@ char*	getName(tSymbols* symbol, tStrs* strs, const int value)
 {
 	char*	name = "NULL";
 
-	for (int i = 0; strs[i].str != NULL; i++)
+	for (int i = 0; strs[i].end != true; i++)
 	{
 		if (strs[i].id == (*symbol).link)
 		{
@@ -14,6 +14,9 @@ char*	getName(tSymbols* symbol, tStrs* strs, const int value)
 				name = getDup(strs[i].str + ((Elf64_Sym *)(*symbol).data)->st_name);
 		}
 	}
+
+	if (!name)
+		memoryFailed(), exit(1);
 
 	return (name);
 }

@@ -4,6 +4,7 @@ void	getError(tInfos* infos, const char* message, const int i)
 {
 	const char*	error = NULL;
 	char*		str = NULL;
+	char*		msg = NULL;
 
 	if (message == NULL)
 		error = strerror(errno);
@@ -11,9 +12,14 @@ void	getError(tInfos* infos, const char* message, const int i)
 		error = message;
 
 	str = getJoin("ft_nm: '", infos->paths[i], "': ");
-	str = getJoin(str, error, "\0");
+	if (!str)
+		memoryFailed(), exit(1);
+	msg = getJoin(str, error, "\0");
+	if (!msg)
+		memoryFailed(), exit(1);
+	free(str);
 
-	infos->errors[i] = str;
+	infos->errors[i] = msg;
 }
 
 bool	isELF(const char* binary, const long int len)

@@ -24,7 +24,7 @@ SRCS = srcs/main.c \
 
 CC = gcc
 
-CFLAGS = # -Wall -Wextra -Werror
+CFLAGS = #-g -fsanitize=address #-Wall -Wextra -Werror
 
 ## == .C TO .O == ##
 

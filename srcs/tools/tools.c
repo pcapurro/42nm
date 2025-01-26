@@ -12,11 +12,13 @@ void	freeArray(char** array)
 
 void	freeBinaries(void** binaries)
 {
+	tSymbols*	symbol;
+
 	for (int i = 0; binaries != NULL && binaries[i] != NULL; i++)
 	{
 		for (int k = 0; ((tSymbols*)binaries[i])[k].end != true; k++)
 		{
-			tSymbols*	symbol = binaries[i];
+			symbol = binaries[i];
 
 			if (symbol[k].address != NULL)
 				free(symbol[k].address);
@@ -25,7 +27,9 @@ void	freeBinaries(void** binaries)
 			if (symbol[k].name != NULL)
 				free(symbol[k].name);
 		}
+		free(binaries[i]);
 	}
+	free(binaries);
 }
 
 bool	isSame(const char* str1, const char* str2)
