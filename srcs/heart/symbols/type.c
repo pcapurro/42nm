@@ -116,17 +116,17 @@ static bool	isUndefined(tSymbols* symbol, tStrs* strs, const int value)
 	return (false);
 }
 
-static bool	isWeakFound(tSymbols* symbol, tStrs* strs, const int value)
+static bool	isWeak(tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
 
-	if (data->st_info >> 4 == STB_WEAK && data->st_shndx != SHN_UNDEF)
+	if (data->st_info >> 4 == STB_WEAK)
 		return (true);
 
 	return (false);
 }
 
-static bool	isWeakNotFound(tSymbols* symbol, tStrs* strs, const int value)
+static bool	isStrong(tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
 
@@ -177,14 +177,27 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 	if (isUndefined(symbol, strs, value) == true)
 		type[0] = 'U';
 
-	if (isWeakFound(symbol, strs, value) == true)
+	if (isStrong(symbol, strs, value) == true)
 		type[0] = 'V';
 
-	if (isWeakNotFound(symbol, strs, value) == true)
-		type[0] = 'W';
+	if (isWeak(symbol, strs, value) == true)
+		type[0] = 'W'; //
 
-	if (((Elf64_Sym *)symbol->data)->st_info >> 4 == STB_LOCAL
-		&& type[0] != '-')
+	if (isSame(symbol->name, "test") == true)
+	{
+		if (((Elf64_Sym *)symbol->data)->st_info >> 4 == STB_WEAK)
+			printf("weak\n");
+		if (((Elf64_Sym *)symbol->data)->st_info >> 4 == STB_GLOBAL)
+			printf("global\n");
+		if (((Elf64_Sym *)symbol->data)->st_info >> 4 == STB_LOCAL)
+			printf("local\n");
+
+		if (((Elf64_Sym *)symbol->data)->st_shndx == 0)
+			printf("undef\n");
+	}
+
+	if (((Elf64_Sym *)symbol->data)->st_info >> 4 == STB_WEAK \
+		&& ((Elf64_Sym *)symbol->data)->st_shndx == 0 && type[0] != '-')
 		type[0] = type[0] + 32;
 
 	return (type);
