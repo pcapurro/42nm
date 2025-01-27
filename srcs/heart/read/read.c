@@ -4,11 +4,12 @@ void	listSymbols(tInfos* infos)
 {
 	for (int i = 0; infos->paths[i] != NULL; i++)
 	{
-		if (getArrLen((void*)infos->paths) > 1)
+		if (getArrLen((void*)infos->paths) > 1 \
+			&& (infos->errors[i] == NULL || infos->errors[i][0] != '\0'))
 			writeStr(infos->paths[i], 1), writeStr(":\n", 1);
 
 		if (infos->errors[i] != NULL)
-			writeStr(infos->errors[i], 2), writeStr("\n", 1);
+			writeStr(infos->errors[i], 2);
 		else
 		{
 			if (infos->noSort == false)

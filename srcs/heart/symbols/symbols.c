@@ -11,10 +11,20 @@ void	getError(tInfos* infos, const char* message, const int i)
 	else
 		error = message;
 
+	if (isSame(error, "Success") == true)
+	{
+		msg = getDup("\0");
+		if (!msg)
+			memoryFailed(), exit(1);
+		infos->errors[i] = msg;
+
+		return ;
+	}
+
 	str = getJoin("ft_nm: '", infos->paths[i], "': ");
 	if (!str)
 		memoryFailed(), exit(1);
-	msg = getJoin(str, error, "\0");
+	msg = getJoin(str, error, "\n");
 	if (!msg)
 		memoryFailed(), exit(1);
 	free(str);
@@ -64,7 +74,7 @@ void	getSymbols(tInfos* infos)
 	for (int i = 0, fd = 0; infos->paths[i] != NULL; i++)
 	{
 		fd = open(infos->paths[i], O_RDONLY);
-		if (fd == -1 || fstat(fd, &fileInfos) < 0)
+		if (fd == -1 || fstat(fd, &fileInfos) < 0 || fileInfos.st_size == 0)
 		{
 			getError(infos, NULL, i);
 			if (fd != -1)
