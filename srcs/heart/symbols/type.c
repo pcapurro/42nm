@@ -105,37 +105,16 @@ static bool isNonNothing(const char* binary, tSymbols* symbol, tStrs* strs, cons
 
 static bool	isDebug(const char* binary, tSymbols* symbol, tStrs* strs, const int value)
 {
-	int			id = 0;
-	int			name = 0;
-
 	Elf64_Sym*	data = symbol->data;
 	Elf64_Ehdr*	header = (Elf64_Ehdr*) binary;
 
-	id = header->e_shstrndx;
+	return (false);
+}
 
-	for (int i = 0; i != header->e_shnum; i++)
-	{
-		const void*	addr = binary + header->e_shoff + (i * header->e_shentsize);
-		Elf64_Shdr*	section = (Elf64_Shdr*)addr;
-
-		if (i == data->st_shndx)
-		{
-			name = section->sh_name;
-			break ;
-		}
-	}
-
-	for (int i = 0; i != header->e_shnum; i++)
-	{
-		const void*	addr = binary + header->e_shoff + (i * header->e_shentsize);
-		Elf64_Shdr*	section = (Elf64_Shdr*)addr;
-
-		if (i == id)
-		{
-			printf("%s\n", binary + section->sh_offset + name);
-			break ;
-		}
-	}
+static bool	isStackUnwind(const char* binary, tSymbols* symbol, tStrs* strs, const int value)
+{
+	Elf64_Sym*	data = symbol->data;
+	Elf64_Ehdr*	header = (Elf64_Ehdr*) binary;
 
 	return (false);
 }
