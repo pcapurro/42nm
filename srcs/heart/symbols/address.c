@@ -15,18 +15,22 @@ char*	getAddress(tSymbols* symbol, tStrs* strs, const int value)
 	if (!str)
 		return (NULL);
 
+	for (int i = 0; i != len; i++)
+		str[i] = '0';
+	str[len] = ' ';
 	str[len + 1] = '\0';
 
 	if (number <= 0)
 	{
-		for (int i = 0; i != len + 1; i++)
-			str[i] = ' ';
+		if (((Elf64_Sym *)(*symbol).data)->st_shndx == SHN_UNDEF \
+			|| ((Elf64_Sym *)(*symbol).data)->st_info >> 4 == STB_WEAK)
+		{
+			for (int i = 0; i != len; i++)
+				str[i] = ' ';
+		}
+
 		return (str);
 	}
-
-	for (int i = 0; i != len; i++)
-		str[i] = '0';
-	str[len] = ' ';
 
 	int k = len - 1;
 	while (k != -1 && number > 9)
