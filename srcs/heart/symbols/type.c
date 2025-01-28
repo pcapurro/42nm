@@ -233,86 +233,69 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 
 	if (isAbsolute(symbol, strs, value) == true)
 		type[0] = 'A'; // v
-	// "A" The symbol's value is absolute, and  will not be changed by further linking.
 
 	if (isBSS(binary, symbol, strs, value) == true)
 		type[0] = 'B'; // x
-	// The symbol is in the BSS data section. This section typically contains zero-initialized
-	// or uninitialized data, although the exact behavior is system dependent.
 
 	if (isCommon(symbol, strs, value) == true)
 		type[0] = 'C'; // x
+
+	if (isInitialized(binary, symbol, strs, value) == true)
+		type[0] = 'D'; // v
+
+	if (isDebug(binary, symbol, strs, value) == true)
+		type[0] = 'N'; // x
+
+	if (isReadMode(binary, symbol, strs, value) == true)
+		type[0] = 'R'; // x
+
+	if (isText(symbol, strs, value) == true)
+		type[0] = 'T'; // x
+
+	if (isUndefined(symbol, strs, value) == true)
+		type[0] = 'U'; // v
+
+	if (isWeakObject(symbol, strs, value) == true)
+		type[0] = 'V'; // x
+
+	if (isWeakUnknown(symbol, strs, value) == true)
+		type[0] = 'W'; // v
+
+	if (isLocalOrGlobal(type[0]) == true && isLocal(symbol, strs, value) == true)
+		type[0] += 32; // v
+
+	return (type);
+}
+
+	// A
+	// // "A" The symbol's value is absolute, and  will not be changed by further linking.
+
+	// B
+	// // The symbol is in the BSS data section. This section typically contains zero-initialized
+	// // or uninitialized data, although the exact behavior is system dependent.
+
+	// C
 	// The symbol is common. Common symbols are uninitialized data.
 	// When linking, multiple common symbols may appear with the same
 	// name. If the symbol is defined anywhere, the common symbols
 	// are treated as undefined references.
-	
-	// /!\ The lowercase c character is used when the symbol is in a special section for small commons.
 
-	if (isInitialized(binary, symbol, strs, value) == true)
-		type[0] = 'D'; // v
-	// The symbol is in the initialized data section.
+	// D
+	// // The symbol is in the initialized data section.
 
-	if (isGlobal(symbol, strs, value) == true)
-		type[0] = 'G'; // x
-	// The symbol is in an initialized data section for small objects.
-	// Some object file formats permit more efficient access to small
-	// data objects, such as a global int variable as opposed to a
-	// large global array.
-
-	if (isDynamic(binary, symbol, strs, value) == true)
-		type[0] = 'i'; // x
-	// For PE format files this indicates that the symbol is in a
-	// section specific to the implementation of DLLs.
-	// For ELF format files this indicates that the symbol is an
-	// indirect function. This is a GNU extension to the standard set
-	// of ELF symbol types. It indicates a symbol which if referenced
-	// by a relocation does not evaluate to its address, but instead
-	// must be invoked at runtime. The runtime execution will then
-	// return the value to be used in the relocation.
-
-	if (isIndirect(binary, symbol, strs, value) == true)
-		type[0] = 'I'; // x
-	// The symbol is an indirect reference to another symbol.
-
-	if (isNonNothing(binary, symbol, strs, value) == true)
-		type[0] = 'n'; // x
-	// The symbol is in a non-data, non-code, non-debug read-only section.
-
-	if (isDebug(binary, symbol, strs, value) == true)
-		type[0] = 'N'; // x
+	// N
 	// The symbol is a debugging symbol.
 
-	if (isStackUnwind(binary, symbol, strs, value) == true)
-		type[0] = 'p'; // x
-	// The symbol is in a stack unwind section.
-
-	if (isReadMode(binary, symbol, strs, value) == true)
-		type[0] = 'R';
+	// R
 	// The symbol is in a read only data section.
 
-	if (isSmall(symbol, strs, value) == true)
-		type[0] = 'S';
-	// The symbol is in an uninitialized or zero-initialized data
-	// section for small objects.
-
-	if (isText(symbol, strs, value) == true)
-		type[0] = 'T';
+	// T
 	// The symbol is in the text (code) section.
 
-	if (isUniqueGlobal(symbol, strs, value) == true)
-		type[0] = 'u'; // x
-	// The symbol is a unique global symbol. This is a GNU extension
-	// to the standard set of ELF symbol bindings. For such a symbol
-	// the dynamic linker will make sure that in the entire process
-	// there is just one symbol with this name and type in use.
-
-	if (isUndefined(symbol, strs, value) == true)
-		type[0] = 'U'; // v
+	// U
 	// The symbol is undefined.
 
-	if (isWeakObject(symbol, strs, value) == true)
-		type[0] = 'V';
+	// V
 	// The  symbol is a  weak object. When a weak defined symbol is
 	// linked with a normal defined symbol, the normal defined  symbol
 	// is used with no error. When a weak undefined symbol is linked
@@ -320,8 +303,7 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 	// becomes zero with no error. On some systems, uppercase
 	// indicates that a default value has been specified.
 
-	if (isWeakUnknown(symbol, strs, value) == true)
-		type[0] = 'W'; // v
+	// W
 	// The symbol is a weak symbol that has not been specifically
 	// tagged as a weak object symbol. When a weak defined symbol is
 	// linked with a normal defined symbol, the normal defined symbol
@@ -329,16 +311,3 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 	// and the symbol is not defined, the value of the symbol is
 	// determined in a system-specific manner without error. On some
 	// systems, uppercase indicates that a default value has been specified.
-
-	if (isStab(symbol, strs, value) == true)
-		type[0] = '-'; // v
-	// The symbol is a stabs symbol in an a.out object file. In this
-	// case, the next values printed are the stabs  other field, the
-	// stabs desc field, and the stab type. Stabs symbols are used to
-	// hold debugging information.
-
-	if (isLocalOrGlobal(type[0]) == true && isLocal(symbol, strs, value) == true)
-		type[0] += 32; // v
-
-	return (type);
-}
