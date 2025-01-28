@@ -72,46 +72,7 @@ static bool	isInitialized(const char* binary, tSymbols* symbol, tStrs* strs, con
 	return (false);
 }
 
-static bool	isGlobal(tSymbols* symbol, tStrs* strs, const int value)
-{
-	Elf64_Sym*	data = symbol->data;
-
-	return (false);
-}
-
-static bool isDynamic(const char* binary, tSymbols* symbol, tStrs* strs, const int value)
-{
-	return (false);
-}
-
-static bool	isIndirect(const char* binary, tSymbols* symbol, tStrs* strs, const int value)
-{
-	Elf64_Sym*	data = symbol->data;
-	Elf64_Ehdr*	header = (Elf64_Ehdr*) binary;
-
-	if (header->e_type != ET_DYN)
-		return (false);
-
-	if (data->st_info >> 4 == STT_GNU_IFUNC)
-		return (true);
-
-	return (false);
-}
-
-static bool isNonNothing(const char* binary, tSymbols* symbol, tStrs* strs, const int value)
-{
-	return (false);
-}
-
 static bool	isDebug(const char* binary, tSymbols* symbol, tStrs* strs, const int value)
-{
-	Elf64_Sym*	data = symbol->data;
-	Elf64_Ehdr*	header = (Elf64_Ehdr*) binary;
-
-	return (false);
-}
-
-static bool	isStackUnwind(const char* binary, tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
 	Elf64_Ehdr*	header = (Elf64_Ehdr*) binary;
@@ -141,21 +102,7 @@ static bool	isReadMode(const char* binary, tSymbols* symbol, tStrs* strs, const 
 	return (false);
 }
 
-static bool	isSmall(tSymbols* symbol, tStrs* strs, const int value)
-{
-	Elf64_Sym*	data = symbol->data;
-
-	return (false);
-}
-
 static bool	isText(tSymbols* symbol, tStrs* strs, const int value)
-{
-	Elf64_Sym*	data = symbol->data;
-
-	return (false);
-}
-
-static bool	isUniqueGlobal(tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
 
@@ -192,11 +139,6 @@ static bool	isWeakUnknown(tSymbols* symbol, tStrs* strs, const int value)
 	return (false);
 }
 
-static bool	isStab(tSymbols* symbol, tStrs* strs, const int value)
-{
-	return (false);
-}
-
 static bool isLocalOrGlobal(const char type)
 {
 	if (type == '?' || type == '-')
@@ -213,11 +155,12 @@ static bool isLocalOrGlobal(const char type)
 
 static bool	isLocal(tSymbols* symbol, tStrs* strs, const int value)
 {
-	if (((Elf64_Sym *)symbol->data)->st_info >> 4 == STB_LOCAL)
+	Elf64_Sym*	data = symbol->data;
+
+	if (data->st_info >> 4 == STB_LOCAL)
 		return (true);
 
-	if (((Elf64_Sym *)symbol->data)->st_info >> 4 == STB_WEAK \
-		&& ((Elf64_Sym *)symbol->data)->st_shndx == 0)
+	if (data->st_info >> 4 == STB_WEAK && data->st_shndx == 0)
 		return (true);
 
 	return (false);
