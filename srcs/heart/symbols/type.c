@@ -119,16 +119,6 @@ static bool	isUndefined(tSymbols* symbol, tStrs* strs, const int value)
 	return (false);
 }
 
-static bool	isWeakObject(tSymbols* symbol, tStrs* strs, const int value)
-{
-	Elf64_Sym*	data = symbol->data;
-
-	if (data->st_info >> 4 == STB_WEAK && data->st_shndx == SHN_UNDEF)
-		return (true);
-
-	return (false);
-}
-
 static bool	isWeakUnknown(tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
@@ -197,9 +187,6 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 
 	if (isUndefined(symbol, strs, value) == true)
 		type[0] = 'U'; // v
-
-	if (isWeakObject(symbol, strs, value) == true)
-		type[0] = 'V'; // x
 
 	if (isWeakUnknown(symbol, strs, value) == true)
 		type[0] = 'W'; // v
