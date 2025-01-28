@@ -131,13 +131,11 @@ static bool	isWeakUnknown(tSymbols* symbol, tStrs* strs, const int value)
 
 static bool isLocalOrGlobal(const char type)
 {
-	if (type == '?' || type == '-')
+	if (type == '?')
 		return (false);
 
-	if (type == 'N' || type == 'I' || type == 'U' || type == 'C')
-		return (false);
-
-	if (type == 'n' || type == 'p' || type == 'i' || type == 'u')
+	if (type == 'A' || type == 'N' \
+		|| type == 'U' || type == 'C')
 		return (false);
 
 	return (true);
@@ -224,14 +222,6 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 
 	// U
 	// The symbol is undefined.
-
-	// V
-	// The  symbol is a  weak object. When a weak defined symbol is
-	// linked with a normal defined symbol, the normal defined  symbol
-	// is used with no error. When a weak undefined symbol is linked
-	// and the symbol is not defined, the value of the weak symbol
-	// becomes zero with no error. On some systems, uppercase
-	// indicates that a default value has been specified.
 
 	// W
 	// The symbol is a weak symbol that has not been specifically
