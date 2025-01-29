@@ -244,7 +244,7 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 	else if (isIndirect(symbol, strs, value) == true)
 		type[0] = 'i'; // v
 
-	else if (isDebug(binary, symbol, strs, value) == true)
+	else if (isDebug(binary, symbol, strs, value) == true && value == 64)
 		type[0] = 'N'; // x
 
 	else if (isReadMode(binary, symbol, strs, value) == true)
@@ -254,7 +254,7 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 	// = and the section must have the flag SHF_EXECINSTR
 
 	else if (isText(binary, symbol, strs, value) == true)
-		type[0] = 'T'; // vx
+		type[0] = 'T'; // v
 
 	else if (isUndefined(symbol, strs, value) == true)
 		type[0] = 'U'; // v
