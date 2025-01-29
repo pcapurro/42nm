@@ -34,6 +34,9 @@ static bool	isBSS(const char* binary, tSymbols* symbol, tStrs* strs, const int v
 	Elf64_Sym*	data = symbol->data;
 	Elf64_Ehdr*	header = (Elf64_Ehdr*) binary;
 
+	if (ELF64_ST_TYPE(data->st_info) != STT_OBJECT)
+		return (false);
+
 	if (data->st_shndx == 0)
 		return (false);
 
@@ -68,6 +71,9 @@ static bool	isInitialized(const char* binary, tSymbols* symbol, tStrs* strs, con
 {
 	Elf64_Sym*	data = symbol->data;
 	Elf64_Ehdr*	header = (Elf64_Ehdr*) binary;
+
+	if (ELF64_ST_TYPE(data->st_info) != STT_OBJECT)
+		return (false);
 
 	if (data->st_shndx == SHN_UNDEF)
 		return (false);
@@ -138,9 +144,27 @@ static bool	isReadMode(const char* binary, tSymbols* symbol, tStrs* strs, const 
 	return (false);
 }
 
-static bool	isText(tSymbols* symbol, tStrs* strs, const int value)
+static bool	isText(const char* binary, tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
+	Elf64_Ehdr*	header = (Elf64_Ehdr*) binary;
+
+	if (ELF64_ST_TYPE(data->st_info) == STT_OBJECT)
+		return (false);
+
+	for (int i = 0; i != header->e_shnum; i++)
+	{
+		const void*	addr = binary + header->e_shoff + (i * header->e_shentsize);
+		Elf64_Shdr*	section = (Elf64_Shdr*)addr;
+
+		if (i == data->st_shndx)
+		{
+			if ((section->sh_flags & SHF_EXECINSTR) != 0 && (section->sh_flags & SHF_ALLOC) != 0)
+				return (true);
+
+			return (false);
+		}
+	}
 
 	return (false);
 }
@@ -235,8 +259,8 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 	// = any section with allocated without the flag SHF_WRITE
 	// = and the section must have the flag SHF_EXECINSTR
 
-	else if (isText(symbol, strs, value) == true)
-		type[0] = 'T'; // x
+	else if (isText(binary, symbol, strs, value) == true)
+		type[0] = 'T'; // vx
 
 	else if (isUndefined(symbol, strs, value) == true)
 		type[0] = 'U'; // v
