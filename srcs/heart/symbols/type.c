@@ -130,7 +130,7 @@ static bool	isWeakUnknown(tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
 
-	if (ELF64_ST_TYPE(data->st_info) == STB_WEAK)
+	if (ELF64_ST_BIND(data->st_info) == STB_WEAK)
 		return (true);
 
 	return (false);
@@ -141,8 +141,7 @@ static bool isLocalOrGlobal(const char type)
 	if (type == '?')
 		return (false);
 
-	if (type == 'A' || type == 'N' \
-		|| type == 'U' || type == 'C')
+	if (type == 'N' || type == 'U')
 		return (false);
 
 	return (true);
