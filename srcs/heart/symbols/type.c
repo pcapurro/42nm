@@ -33,7 +33,7 @@ static bool	isCommon(tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym	*data = symbol->data;
 
-	if ((data->st_shndx == SHN_UNDEF) && (ELF64_ST_TYPE(data->st_info) == STT_OBJECT))
+	if (ELF64_ST_TYPE(data->st_info) == STT_COMMON)
 		return (true);
 
 	return (false);
@@ -119,11 +119,18 @@ static bool	isUndefined(tSymbols* symbol, tStrs* strs, const int value)
 	return (false);
 }
 
+static bool	isWeakNormal(tSymbols* symbol, tStrs* strs, const int value)
+{
+	Elf64_Sym*	data = symbol->data;
+
+	return (false);
+}
+
 static bool	isWeakUnknown(tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
 
-	if (data->st_info >> 4 == STB_WEAK)
+	if (ELF64_ST_TYPE(data->st_info) == STB_WEAK)
 		return (true);
 
 	return (false);
@@ -145,10 +152,10 @@ static bool	isLocal(tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
 
-	if (data->st_info >> 4 == STB_LOCAL)
+	if (ELF64_ST_TYPE(data->st_info) == STB_LOCAL)
 		return (true);
 
-	if (data->st_info >> 4 == STB_WEAK && data->st_shndx == 0)
+	if (ELF64_ST_TYPE(data->st_info) == STB_WEAK && data->st_shndx == 0)
 		return (true);
 
 	return (false);
@@ -169,7 +176,7 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 		type[0] = 'B'; // x
 
 	if (isCommon(symbol, strs, value) == true)
-		type[0] = 'C'; // x
+		type[0] = 'C'; // v
 
 	if (isInitialized(binary, symbol, strs, value) == true)
 		type[0] = 'D'; // v
@@ -185,6 +192,9 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 
 	if (isUndefined(symbol, strs, value) == true)
 		type[0] = 'U'; // v
+
+	if (isWeakNormal(symbol, strs, value) == true)
+		type[0] = 'V'; // x
 
 	if (isWeakUnknown(symbol, strs, value) == true)
 		type[0] = 'W'; // v
@@ -223,6 +233,14 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 	// U
 	// The symbol is undefined.
 
+	// V
+	// The symbol is a weak object. When a weak defined symbol is
+	// linked with a normal defined symbol, the normal defined symbol
+	// is used with no error. When a weak undefined symbol is linked
+	// and the symbol is not defined, the value of the weak symbol
+	// becomes zero with no error. On some systems, uppercase
+	// indicates that a default value has been specified.
+
 	// W
 	// The symbol is a weak symbol that has not been specifically
 	// tagged as a weak object symbol. When a weak defined symbol is
@@ -231,48 +249,3 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 	// and the symbol is not defined, the value of the symbol is
 	// determined in a system-specific manner without error. On some
 	// systems, uppercase indicates that a default value has been specified.
-
-// jbarbate :
-// char	findType64(Elf64_Sym sym, Elf64_Shdr *shdr)
-// {
-// 	char  c;
-	
-// 	if (ELF64_ST_TYPE(sym.st_info) == STT_OBJECT && ELF64_ST_BIND(sym.st_info) == STB_WEAK)
-// 		c = 'V';
-
-// 	else if (ELF64_ST_BIND(sym.st_info) == STB_WEAK)
-// 		c = 'W';
-
-// 	else if (ELF64_ST_TYPE(sym.st_info) == STT_GNU_IFUNC)
-// 		c = 'i';
-
-// 	else if (ELF64_ST_TYPE(sym.st_info) == STT_FILE || sym.st_shndx == SHN_ABS)
-// 		c = 'A';
-
-// 	else if (shdr[sym.st_shndx].sh_type == SHT_NOBITS)
-// 		c = 'B';
-
-// 	else if (shdr[sym.st_shndx].sh_flags == (SHF_MERGE | SHF_STRINGS)
-// 		|| (!shdr[sym.st_shndx].sh_flags && sym.st_shndx))
-// 		c = 'N';
-
-// 	else if (shdr[sym.st_shndx].sh_flags & SHF_EXECINSTR)
-// 		c = 'T';
-
-// 	else if (shdr[sym.st_shndx].sh_flags == (SHF_WRITE | SHF_ALLOC))
-// 		c = 'D';
-
-// 	else if (shdr[sym.st_shndx].sh_flags == SHF_ALLOC)
-// 		c = 'R';
-
-// 	else if (ELF64_ST_TYPE(sym.st_info) == STT_COMMON)
-// 		c = 'C';
-
-// 	else if (!sym.st_shndx)
-// 		c = 'U';
-
-// 	else
-// 		c = '?';
-
-// 	return c;
-// }
