@@ -1,5 +1,14 @@
 #include "../../../include/header.h"
 
+static void	writeLine(const char* address, const char* type, const char* name)
+{
+	writeStr(address, 1);
+	writeStr(type, 1);
+	writeStr(name, 1);
+
+	writeStr("\n", 1);
+}
+
 void	listSymbols(tInfos* infos)
 {
 	for (int i = 0; infos->paths[i] != NULL; i++)
@@ -12,31 +21,25 @@ void	listSymbols(tInfos* infos)
 			writeStr(infos->errors[i], 2);
 		else
 		{
-			if (infos->noSort == false)
-			{
-				if (orderSymbols(&infos->binaries[i]) == NULL)
-					memoryFailed(), setToNull(infos), exit(1);
-			}
-			if (infos->reverseSort == true && infos->noSort == false)
-			{
-				if (reverseSymbols(&infos->binaries[i]) == NULL)
-					memoryFailed(), setToNull(infos), exit(1);
-			}
+			if (infos->noSort == false && orderSymbols(&infos->binaries[i]) == NULL)
+				memoryFailed(), setToNull(infos), exit(1);
+			if (infos->reverseSort == true && infos->noSort == false \
+				&& reverseSymbols(&infos->binaries[i]) == NULL)
+				memoryFailed(), setToNull(infos), exit(1);
 
 			for (int k = 0; ((tSymbols *)infos->binaries[i])[k].end != true; k++)
 			{
 				tSymbols*	symbol = (infos->binaries[i]);
+				char		type = symbol[k].type[0];
 
-				if (infos->undefinedOnly == true && symbol[k].type[0] != 'w' \
-					&& symbol[k].type[0] != 'U' && symbol[k].type[0] != 'u')
+				if (infos->undefinedOnly == true && type != 'w' && type != 'u' && type != 'U')
 					continue ;
-				if (infos->externOnly == true && symbol[k].type[0] > 96)
+				if (infos->debug == false && (type == 'a' || type == 'A' || type == 'N'))
+					continue ;
+				if (infos->externOnly == true && type > 96)
 					continue ;
 
-				writeStr(symbol[k].address, 1);
-				writeStr(symbol[k].type, 1);
-				writeStr(symbol[k].name, 1);
-				writeStr("\n", 1);
+				writeLine(symbol[k].address, symbol[k].type, symbol[k].name);
 			}
 		}
 		if (infos->paths[i + 1] != NULL)

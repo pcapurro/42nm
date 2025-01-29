@@ -21,7 +21,7 @@ typedef struct stat tStat;
 
 struct sInfos
 {
-	bool		debugOnly;
+	bool		debug;
 	bool		externOnly;
 	bool		undefinedOnly;
 
@@ -36,6 +36,7 @@ struct sInfos
 	int			binaryLen;
 	char*		binary;
 
+	int			returnValue;
 	char**		errors;
 };
 
@@ -80,7 +81,8 @@ void	systemFailed(void);
 void	getPath(tInfos* infos);
 void	getPaths(tInfos* infos, const char** argv);
 
-int		addOption(tInfos* infos, const char* argv);
+int		addUnixOption(tInfos* infos, const char* argv);
+int		addGnuOption(tInfos* infos, const char* argv);
 void	getOptions(tInfos* infos, const char** argv);
 
 bool	isELF(const char* binary, const long int len);

@@ -29,6 +29,7 @@ int	getError(tInfos* infos, const char* message, const int i)
 		{ free(str); return (1); }
 	free(str);
 
+	infos->returnValue++;
 	infos->errors[i] = msg;
 
 	return (0);

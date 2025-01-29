@@ -9,10 +9,11 @@ void	setToDefault(tInfos* infos)
 	infos->binaryLen = 0;
 	infos->binary = NULL;
 
+	infos->returnValue = 0;
 	infos->errors = NULL;
 
 	infos->options = false;
-	infos->debugOnly = false;
+	infos->debug = false;
 	infos->externOnly = false;
 	infos->undefinedOnly = false;
 
@@ -60,13 +61,8 @@ int	main(const int argc, const char **argv)
 
 	setToNull(&infos);
 
+	if (infos.returnValue != 0)
+		return (infos.returnValue);
+
 	return (0);
 }
-
-// options:
-// -a x
-// -g x
-// -p v
-// -r v
-// -u v
-// -h v
