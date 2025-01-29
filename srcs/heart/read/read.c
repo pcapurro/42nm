@@ -16,7 +16,7 @@ static bool	isValid(tInfos* infos, const char type)
 
 	if (infos->undefinedOnly == true && type != 'w' && type != 'u' && type != 'U')
 		return (false);
-	if (infos->debug == false && (type == 'a' || type == 'A' || type == 'N'))
+	if (type == 'a' || type == 'A' || type == 'N')
 		return (false);
 	if (infos->externOnly == true && type > 96)
 		return (false);

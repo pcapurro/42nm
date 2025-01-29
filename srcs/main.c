@@ -13,7 +13,6 @@ void	setToDefault(tInfos* infos)
 	infos->errors = NULL;
 
 	infos->options = false;
-	infos->debug = false;
 	infos->externOnly = false;
 	infos->undefinedOnly = false;
 

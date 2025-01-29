@@ -9,9 +9,6 @@ int	addUnixOption(tInfos* infos, const char* argv)
 
 	for (int i = 1; argv[i] != '\0'; i++)
 	{
-		if (argv[i] == 'a')
-			{ value++, infos->debug = true; continue ; }
-
 		if (argv[i] == 'g')
 			{ value++, infos->externOnly = true; continue ; }
 
@@ -34,9 +31,6 @@ int	addGnuOption(tInfos* infos, const char* argv)
 {
 	if (argv[1] != '-')
 		return (0);
-
-	if (isSame(argv, "--debug-syms") == true)
-		return (infos->debug = true);
 
 	if (isSame(argv, "--extern-only") == true)
 		return (infos->externOnly = true);

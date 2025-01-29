@@ -21,7 +21,6 @@ typedef struct stat tStat;
 
 struct sInfos
 {
-	bool		debug;
 	bool		externOnly;
 	bool		undefinedOnly;
 
