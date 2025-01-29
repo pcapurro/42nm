@@ -104,22 +104,24 @@ void	getSymbols(tInfos* infos)
 	infos->binary = NULL;
 }
 
-// Header ELF (Elf64_Ehdr *)
-/// e_shoff -> emplacement des sections dans le fichier
-/// e_shentsize -> taille d'une section
-/// e_shnum -> nb de sections
+// ELF binary structure:
 
-// Section (Elf64_Shdr *)
-/// sh_type -> type de section
-/// sh_offset -> ou commence la table
-/// sh_entsize -> taille d'une entrée de la table
+// Header ELF (Elf64/32_Ehdr *)
+/// e_shoff -> offset of sections
+/// e_shentsize -> size of a section
+/// e_shnum -> number of sections
 
-// Si le sh_type est égal à SH_SYMTAB : c'est une table de symboles (Elf64_Sym *)
-/// st_name -> index dans la table des chaines de symboles (SHT_STRTAB) contenant le nom du symbole
-/// st_info -> type de symbole (4) (fonction ou variable) + liaison du symbole (4) (global ou local)
-/// st_value -> addresse du symbole
-/// st_link -> index de la table des chaines correspondante
+// Section (Elf64/32_Shdr *)
+/// sh_type -> type section
+/// sh_offset -> offset table
+/// sh_entsize -> size of the table
 
-// Si le sh_type est égal à SHT_STRTAB : c'est une table de chaines (char* )
-/// le sh_offset de la section qui a amené à cette table pointe vers un ensemble de chaines
-/// ex : "getSymbols\0getError\0..."
+// Table with a sh_type of SH_SYMTAB > table of symbols (Elf64/32_Sym *)
+/// st_name -> index in the string table of symbols (SHT_STRTAB) containing the name of the symbol
+/// st_info -> symbol type (function or variable) + symbol bind (global or local)
+/// st_value -> symbol addr
+/// st_link -> index in the string table of symbols
+
+// If the sh_type is SHT_STRTAB : table of arrays (char*)
+/// the st_name leads in a specific string
+/// the sh_offset of a section leads somewhere in the specific string

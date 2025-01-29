@@ -9,6 +9,21 @@ static void	writeLine(const char* address, const char* type, const char* name)
 	writeStr("\n", 1);
 }
 
+static bool	isValid(tInfos* infos, const char type)
+{
+	if (type == '!')
+		return (false);
+
+	if (infos->undefinedOnly == true && type != 'w' && type != 'u' && type != 'U')
+		return (false);
+	if (infos->debug == false && (type == 'a' || type == 'A' || type == 'N'))
+		return (false);
+	if (infos->externOnly == true && type > 96)
+		return (false);
+
+	return (true);
+}
+
 void	listSymbols(tInfos* infos)
 {
 	for (int i = 0; infos->paths[i] != NULL; i++)
@@ -30,16 +45,9 @@ void	listSymbols(tInfos* infos)
 			for (int k = 0; ((tSymbols *)infos->binaries[i])[k].end != true; k++)
 			{
 				tSymbols*	symbol = (infos->binaries[i]);
-				char		type = symbol[k].type[0];
 
-				if (infos->undefinedOnly == true && type != 'w' && type != 'u' && type != 'U')
-					continue ;
-				if (infos->debug == false && (type == 'a' || type == 'A' || type == 'N'))
-					continue ;
-				if (infos->externOnly == true && type > 96)
-					continue ;
-
-				writeLine(symbol[k].address, symbol[k].type, symbol[k].name);
+				if (isValid(infos, symbol[k].type[0]) == true)
+					writeLine(symbol[k].address, symbol[k].type, symbol[k].name);
 			}
 		}
 		if (infos->paths[i + 1] != NULL)

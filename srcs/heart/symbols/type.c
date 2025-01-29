@@ -1,5 +1,24 @@
 #include "../../../include/header.h"
 
+static bool isInvalid(const char* binary, tSymbols* symbol, tStrs* strs, const int value)
+{
+	Elf64_Sym*	data = symbol->data;
+
+	if (data->st_value < 0)
+		return (true);
+	// invalid address
+
+	if (ELF64_ST_TYPE(data->st_info) == STT_SECTION)
+		return (true);
+	// the symbol represents a section, not a real symbol
+
+	if (data->st_value > 0 && data->st_shndx == SHN_UNDEF)
+		return (true);
+	// an absolute symbol can't have a valid address
+
+	return (false);
+}
+
 static bool	isAbsolute(tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
@@ -27,6 +46,7 @@ static bool	isBSS(const char* binary, tSymbols* symbol, tStrs* strs, const int v
 		{
 			if (section->sh_type != SHT_NOBITS)
 				return (false);
+
 			return (true);
 		}
 	}
@@ -70,7 +90,7 @@ static bool	isInitialized(const char* binary, tSymbols* symbol, tStrs* strs, con
 			if (section->sh_flags & SHF_ALLOC != 0)
 				return (true);
 
-			break ;
+			return (false);
 		}
 	}
 
@@ -97,10 +117,11 @@ static bool	isReadMode(const char* binary, tSymbols* symbol, tStrs* strs, const 
 
 		if (i == data->st_shndx)
 		{
-			// si alloué en mémoire + pas modifiable == lecture seule
-			if ((section->sh_flags & SHF_ALLOC != 0) && (section->sh_flags & SHF_WRITE == 0))
+			if ((section->sh_flags & SHF_ALLOC) != 0 && (section->sh_flags & SHF_WRITE) == 0 \
+				&& (section->sh_flags & SHF_EXECINSTR) == 0)
 				return (true);
-			break ;
+
+			return (false);
 		}
 	}
 
@@ -173,41 +194,47 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 	if (!type)
 		return (NULL);
 
-	if (isAbsolute(symbol, strs, value) == true)
+	if (isInvalid(binary, symbol, strs, value) == true)
+		type[0] = '!';
+
+	else if (isAbsolute(symbol, strs, value) == true)
 		type[0] = 'A'; // v
 
-	if (isBSS(binary, symbol, strs, value) == true)
+	else if (isBSS(binary, symbol, strs, value) == true)
 		type[0] = 'B'; // v
 	// the symbol is in the '.bss' data section (= a section of uninitialized data) (SHT_NOBITS type)
 	// .bss data section:
 	// = commonly used for static/global variables uninitialized or set to zero
 	// > doesn't contain any data in the binary file, space being used during execution
 
-	if (isCommon(symbol, strs, value) == true)
+	else if (isCommon(symbol, strs, value) == true)
 		type[0] = 'C'; // v
 
-	if (isInitialized(binary, symbol, strs, value) == true)
+	else if (isInitialized(binary, symbol, strs, value) == true)
 		type[0] = 'D'; // v
 
-	if (isDebug(binary, symbol, strs, value) == true)
+	else if (isDebug(binary, symbol, strs, value) == true)
 		type[0] = 'N'; // x
 
-	if (isReadMode(binary, symbol, strs, value) == true)
-		type[0] = 'R'; // x
+	else if (isReadMode(binary, symbol, strs, value) == true)
+		type[0] = 'R'; // v
+	// the symbol is in a read-only section
+	// = any section with allocated without the flag SHF_WRITE
+	// = and the section must have the flag SHF_EXECINSTR
 
-	if (isText(symbol, strs, value) == true)
+	else if (isText(symbol, strs, value) == true)
 		type[0] = 'T'; // x
 
-	if (isUndefined(symbol, strs, value) == true)
+	else if (isUndefined(symbol, strs, value) == true)
 		type[0] = 'U'; // v
 
-	if (isWeakNormal(symbol, strs, value) == true)
+	else if (isWeakNormal(symbol, strs, value) == true)
 		type[0] = 'V'; // x
 
-	if (isWeakUnknown(symbol, strs, value) == true)
+	else if (isWeakUnknown(symbol, strs, value) == true)
 		type[0] = 'W'; // v
 
-	if (isLocalOrGlobal(type[0]) == true && isLocal(symbol, strs, value) == true)
+	else if (isLocalOrGlobal(type[0]) == true && isLocal(symbol, strs, value) == true)
 		type[0] += 32; // v
 
 	return (type);
