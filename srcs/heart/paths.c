@@ -6,7 +6,7 @@ void	getPath(tInfos* infos)
 
 	infos->paths[0] = getDup("a.out");
 	if (!infos->paths[0])
-		free(infos->paths), exit(1);
+		memoryFailed(), free(infos->paths), exit(1);
 }
 
 void	getPaths(tInfos* infos, const char** argv)
@@ -25,7 +25,7 @@ void	getPaths(tInfos* infos, const char** argv)
 	else
 		infos->paths = malloc(sizeof(char*) * (len + 1));
 	if (!infos->paths)
-		memoryFailed(), exit(1);
+		memoryFailed(), setToNull(infos), exit(1);
 	infos->paths[len] = NULL;
 
 	if (len == 0)

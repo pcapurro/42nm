@@ -12,11 +12,13 @@ char*	getName(tSymbols* symbol, tStrs* strs, const int value)
 				name = getDup(strs[i].str + ((Elf32_Sym *)(*symbol).data)->st_name);
 			if (value == 64)
 				name = getDup(strs[i].str + ((Elf64_Sym *)(*symbol).data)->st_name);
+
+			break ;
 		}
 	}
 
 	if (!name)
-		memoryFailed(), exit(1);
+		return (NULL);
 
 	return (name);
 }

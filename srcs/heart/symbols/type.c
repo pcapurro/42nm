@@ -160,7 +160,7 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 
 	type = getDup("? ");
 	if (!type)
-		memoryFailed(), exit(1);
+		return (NULL);
 
 	if (isAbsolute(symbol, strs, value) == true)
 		type[0] = 'A'; // v
@@ -231,3 +231,48 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 	// and the symbol is not defined, the value of the symbol is
 	// determined in a system-specific manner without error. On some
 	// systems, uppercase indicates that a default value has been specified.
+
+// jbarbate :
+// char	findType64(Elf64_Sym sym, Elf64_Shdr *shdr)
+// {
+// 	char  c;
+	
+// 	if (ELF64_ST_TYPE(sym.st_info) == STT_OBJECT && ELF64_ST_BIND(sym.st_info) == STB_WEAK)
+// 		c = 'V';
+
+// 	else if (ELF64_ST_BIND(sym.st_info) == STB_WEAK)
+// 		c = 'W';
+
+// 	else if (ELF64_ST_TYPE(sym.st_info) == STT_GNU_IFUNC)
+// 		c = 'i';
+
+// 	else if (ELF64_ST_TYPE(sym.st_info) == STT_FILE || sym.st_shndx == SHN_ABS)
+// 		c = 'A';
+
+// 	else if (shdr[sym.st_shndx].sh_type == SHT_NOBITS)
+// 		c = 'B';
+
+// 	else if (shdr[sym.st_shndx].sh_flags == (SHF_MERGE | SHF_STRINGS)
+// 		|| (!shdr[sym.st_shndx].sh_flags && sym.st_shndx))
+// 		c = 'N';
+
+// 	else if (shdr[sym.st_shndx].sh_flags & SHF_EXECINSTR)
+// 		c = 'T';
+
+// 	else if (shdr[sym.st_shndx].sh_flags == (SHF_WRITE | SHF_ALLOC))
+// 		c = 'D';
+
+// 	else if (shdr[sym.st_shndx].sh_flags == SHF_ALLOC)
+// 		c = 'R';
+
+// 	else if (ELF64_ST_TYPE(sym.st_info) == STT_COMMON)
+// 		c = 'C';
+
+// 	else if (!sym.st_shndx)
+// 		c = 'U';
+
+// 	else
+// 		c = '?';
+
+// 	return c;
+// }

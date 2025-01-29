@@ -1,6 +1,6 @@
 #include "../../../include/header.h"
 
-void	initializeBinary64(const char* binary, tSymbols** symbols, tStrs** strs)
+void	*initializeBinary64(const char* binary, tSymbols** symbols, tStrs** strs)
 {
 	int	symLen = 0;
 	int	strsLen = 0;
@@ -20,7 +20,7 @@ void	initializeBinary64(const char* binary, tSymbols** symbols, tStrs** strs)
 
 	(*symbols) = malloc(sizeof(tSymbols) * (symLen + 1));
 	if (!(*symbols))
-		memoryFailed(), exit(1);
+		return (NULL);
 
 	for (int i = 0; i != symLen + 1; i++)
 	{
@@ -36,7 +36,7 @@ void	initializeBinary64(const char* binary, tSymbols** symbols, tStrs** strs)
 
 	(*strs) = malloc(sizeof(tStrs) * (strsLen + 1));
 	if (!(*strs))
-		memoryFailed(), exit(1);
+		{ free(*symbols); return (NULL); }
 
 	for (int i = 0; i != strsLen + 1; i++)
 	{
@@ -45,6 +45,8 @@ void	initializeBinary64(const char* binary, tSymbols** symbols, tStrs** strs)
 		(*strs)[i].end = false;
 	}
 	(*strs)[strsLen].end = true;
+
+	return (header);
 }
 
 void	registerBinary64(const char* binary, tSymbols* symbols, tStrs* strs)
@@ -74,20 +76,30 @@ void	registerBinary64(const char* binary, tSymbols* symbols, tStrs* strs)
 	}
 }
 
-void	analyzeBinary64(tInfos* infos, const char* binary, const int y)
+void	analyzeBinary64(tInfos* infos, const int y)
 {
 	tStrs*		strs = NULL;
 	tSymbols*	symbols = NULL;
 
-	initializeBinary64(binary, &symbols, &strs);
-	registerBinary64(binary, symbols, strs);
+	if (initializeBinary64(infos->binary, &symbols, &strs) == NULL)
+		memoryFailed(), setToNull(infos), exit(1);
+
+	registerBinary64(infos->binary, symbols, strs);
+	infos->binaries[y] = symbols;
 
 	for (int i = 0; symbols[i].end != true; i++)
 	{
 		symbols[i].name = getName(&symbols[i], strs, 64);
-		symbols[i].type = getType(binary, &symbols[i], strs, 64);
+		symbols[i].type = getType(infos->binary, &symbols[i], strs, 64);
 		symbols[i].address = getAddress(&symbols[i], strs, 64);
+
+		if (!symbols[i].name || !symbols[i].type || !symbols[i].address)
+		{
+			memoryFailed();
+			free(strs);
+			setToNull(infos);
+			exit(1);
+		}
 	}
-	infos->binaries[y] = symbols;
 	free(strs);
 }

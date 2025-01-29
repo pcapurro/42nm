@@ -2,10 +2,10 @@
 
 void	memoryFailed(void)
 {
-	writeStr("Error! Memory allocation failed.\n", 2);
+	writeStr(MEMORY_ERROR, 2);
 }
 
 void	systemFailed(void)
 {
-	writeStr("Error! System failed.\n", 2);
+	writeStr(SYSTEM_FAILED, 2);
 }

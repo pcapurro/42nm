@@ -5,6 +5,12 @@ void	setToDefault(tInfos* infos)
 	infos->paths = NULL;
 	infos->binaries = NULL;
 
+	infos->fd = -1;
+	infos->binaryLen = 0;
+	infos->binary = NULL;
+
+	infos->errors = NULL;
+
 	infos->options = false;
 	infos->debugOnly = false;
 	infos->externOnly = false;
@@ -25,6 +31,12 @@ void	setToNull(tInfos* infos)
 		}
 		free(infos->errors);
 	}
+
+	if (infos->binary != NULL)
+		munmap(infos->binary, infos->binaryLen);
+
+	if (infos->fd != -1)
+		close(infos->fd);
 
 	if (infos->paths != NULL)
 		freeArray(infos->paths);

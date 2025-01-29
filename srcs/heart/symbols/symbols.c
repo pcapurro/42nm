@@ -1,6 +1,6 @@
 #include "../../../include/header.h"
 
-void	getError(tInfos* infos, const char* message, const int i)
+int	getError(tInfos* infos, const char* message, const int i)
 {
 	const char*	error = NULL;
 	char*		str = NULL;
@@ -15,21 +15,23 @@ void	getError(tInfos* infos, const char* message, const int i)
 	{
 		msg = getDup("\0");
 		if (!msg)
-			memoryFailed(), exit(1);
+			return (1);
 		infos->errors[i] = msg;
 
-		return ;
+		return (0);
 	}
 
 	str = getJoin("ft_nm: '", infos->paths[i], "': ");
 	if (!str)
-		memoryFailed(), exit(1);
+		return (1);
 	msg = getJoin(str, error, "\n");
 	if (!msg)
-		memoryFailed(), exit(1);
+		{ free(str); return (1); }
 	free(str);
 
 	infos->errors[i] = msg;
+
+	return (0);
 }
 
 bool	isELF(const char* binary, const long int len)
@@ -50,18 +52,14 @@ void	initializeSymbols(tInfos* infos)
 
 	infos->binaries = malloc(sizeof(void*) * (len + 1));
 	if (!infos->binaries)
-		{ memoryFailed(); freeArray(infos->paths); exit(1); }
+		memoryFailed(), setToNull(infos), exit(1);
 	for (int i = 0; i != len + 1; i++)
 		infos->binaries[i] = NULL;
 
 	infos->errors = malloc(sizeof(char*) * (len + 1));
 	if (!infos->errors)
-	{
-		memoryFailed();
-		freeArray(infos->paths);
-		freeBinaries(infos->binaries);
-		exit(1);
-	}
+		memoryFailed(), setToNull(infos), exit(1);
+
 	for (int i = 0; i != len + 1; i++)
 		infos->errors[i] = NULL;
 }
@@ -71,31 +69,38 @@ void	getSymbols(tInfos* infos)
 	tStat	fileInfos;
 
 	initializeSymbols(infos);
-	for (int i = 0, fd = 0; infos->paths[i] != NULL; i++)
+	for (int i = 0, value = 0; infos->paths[i] != NULL; i++, infos->fd = -1, value = 0)
 	{
-		fd = open(infos->paths[i], O_RDONLY);
-		if (fd == -1 || fstat(fd, &fileInfos) < 0 || fileInfos.st_size == 0)
+		if (value != 0)
+			memoryFailed(), setToNull(infos), exit(1);
+
+		infos->fd = open(infos->paths[i], O_RDONLY);
+		if (infos->fd == -1 || fstat(infos->fd, &fileInfos) < 0 || fileInfos.st_size == 0)
 		{
-			getError(infos, NULL, i);
-			if (fd != -1)
-				close(fd);
+			value = getError(infos, NULL, i);
+			if (infos->fd != -1)
+				close(infos->fd);
 			continue ;
 		}
-
-		char*	binary = mmap(NULL, fileInfos.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-		if (binary == MAP_FAILED)
-			{ getError(infos, NULL, i); close(fd); continue ; }
-		if (isELF(binary, fileInfos.st_size) == false)
-			{ getError(infos, "file format not recognized", i); close(fd); continue ; }
-
-		if (binary[4] == 2)
-			analyzeBinary64(infos, binary, i);
 		else
-			analyzeBinary32(infos, binary, i);
+			infos->binaryLen = fileInfos.st_size;
 
-		munmap(binary, fileInfos.st_size);
-		close(fd);
+		infos->binary = mmap(NULL, infos->binaryLen, PROT_READ, MAP_PRIVATE, infos->fd, 0);
+		if (infos->binary == MAP_FAILED)
+			{ value = getError(infos, NULL, i); close(infos->fd); continue ; }
+		if (isELF(infos->binary, infos->binaryLen) == false)
+			{ value = getError(infos, "file format not recognized", i); close(infos->fd); continue ; }
+
+		if (infos->binary[4] == 2)
+			analyzeBinary64(infos, i);
+		else
+			analyzeBinary32(infos, i);
+
+		munmap(infos->binary, fileInfos.st_size);
+		close(infos->fd);
 	}
+	infos->fd = -1;
+	infos->binary = NULL;
 }
 
 // Header ELF (Elf64_Ehdr *)

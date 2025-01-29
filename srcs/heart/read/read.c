@@ -13,9 +13,15 @@ void	listSymbols(tInfos* infos)
 		else
 		{
 			if (infos->noSort == false)
-				orderSymbols(&infos->binaries[i]);
+			{
+				if (orderSymbols(&infos->binaries[i]) == NULL)
+					memoryFailed(), setToNull(infos), exit(1);
+			}
 			if (infos->reverseSort == true && infos->noSort == false)
-				reverseSymbols(&infos->binaries[i]);
+			{
+				if (reverseSymbols(&infos->binaries[i]) == NULL)
+					memoryFailed(), setToNull(infos), exit(1);
+			}
 
 			for (int k = 0; ((tSymbols *)infos->binaries[i])[k].end != true; k++)
 			{

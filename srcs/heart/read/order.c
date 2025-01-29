@@ -29,7 +29,7 @@ int		getTopOrdered(tSymbols* array, const int len)
 	return (saved);
 }
 
-void	orderSymbols(void** array)
+void	*orderSymbols(void** array)
 {
 	int			len = 0;
 	tSymbols*	newArray = NULL;
@@ -40,12 +40,12 @@ void	orderSymbols(void** array)
 
 	newArray = malloc(sizeof(tSymbols) * (len + 1));
 	if (!newArray)
-		memoryFailed(), exit(1);
+		return (NULL);
 	newArray[len].end = true;
 
 	copyArray = malloc(sizeof(tSymbols) * (len + 1));
 	if (!copyArray)
-		memoryFailed(), exit(1);
+		{ free(newArray); return (NULL); }
 	copyArray[len].end = true;
 
 	int	value = 0;
@@ -71,7 +71,7 @@ void	orderSymbols(void** array)
 	(*array) = newArray;
 }
 
-void	reverseSymbols(void** array)
+void	*reverseSymbols(void** array)
 {
 	int			len = 0;
 	tSymbols*	newArray = NULL;
@@ -81,7 +81,7 @@ void	reverseSymbols(void** array)
 
 	newArray = malloc(sizeof(tSymbols) * (len + 1));
 	if (!newArray)
-		memoryFailed(), exit(1);
+		return (NULL);
 	newArray[len].end = true;
 
 	for (int i = 0, k = len - 1; ((tSymbols *)(*array))[i].end != true; i++, k--)
@@ -93,4 +93,6 @@ void	reverseSymbols(void** array)
 
 	free(*array);
 	(*array) = newArray;
+
+	return (newArray);
 }

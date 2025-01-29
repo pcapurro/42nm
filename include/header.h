@@ -14,6 +14,9 @@
 # include <sys/mman.h>
 # include <sys/stat.h>
 
+# define MEMORY_ERROR "Error! Memory allocation failed.\n"
+# define SYSTEM_FAILED "Error! System failed.\n"
+
 typedef struct stat tStat;
 
 struct sInfos
@@ -28,6 +31,10 @@ struct sInfos
 	bool		options;
 	char**		paths;
 	void**		binaries;
+
+	int			fd;
+	int			binaryLen;
+	char*		binary;
 
 	char**		errors;
 };
@@ -58,7 +65,6 @@ typedef struct sStrs tStrs;
 
 int		getArrLen(void** array);
 void	writeStr(const char* str, const int fd);
-char*	getNumber(const int number);
 char*	getDup(const char* str);
 char*	getJoin(const char* s1, const char* s2, const char* s3);
 int		getStrLen(const char* str);
@@ -79,24 +85,24 @@ void	getOptions(tInfos* infos, const char** argv);
 
 bool	isELF(const char* binary, const long int len);
 
-void	getError(tInfos* infos, const char* message, const int i);
+int		getError(tInfos* infos, const char* message, const int i);
 
 char*	getName(tSymbols* symbol, tStrs* strs, const int value);
 char*	getAddress(tSymbols* symbol, tStrs* strs, const int value);
 char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value);
 
 void	registerBinary32(const char* binary, tSymbols* symbols, tStrs* strs);
-void	initializeBinary32(const char* binary, tSymbols** symbols, tStrs** strs);
-void	analyzeBinary32(tInfos* infos, const char* binary, const int y);
+void	*initializeBinary32(const char* binary, tSymbols** symbols, tStrs** strs);
+void	analyzeBinary32(tInfos* infos, const int y);
 
 void	registerBinary64(const char* binary, tSymbols* symbols, tStrs* strs);
-void	initializeBinary64(const char* binary, tSymbols** symbols, tStrs** strs);
-void	analyzeBinary64(tInfos* infos, const char* binary, const int y);
+void	*initializeBinary64(const char* binary, tSymbols** symbols, tStrs** strs);
+void	analyzeBinary64(tInfos* infos, const int y);
 
 void	getSymbols(tInfos* infos);
 
-void	orderSymbols(void** symbols);
-void	reverseSymbols(void** symbols);
+void	*orderSymbols(void** symbols);
+void	*reverseSymbols(void** symbols);
 void	listSymbols(tInfos* infos);
 
 void	setToDefault(tInfos* infos);
