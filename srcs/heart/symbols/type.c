@@ -34,9 +34,6 @@ static bool	isBSS(const char* binary, tSymbols* symbol, tStrs* strs, const int v
 	Elf64_Sym*	data = symbol->data;
 	Elf64_Ehdr*	header = (Elf64_Ehdr*) binary;
 
-	if (ELF64_ST_TYPE(data->st_info) != STT_OBJECT)
-		return (false);
-
 	if (data->st_shndx == 0)
 		return (false);
 
@@ -71,9 +68,6 @@ static bool	isInitialized(const char* binary, tSymbols* symbol, tStrs* strs, con
 {
 	Elf64_Sym*	data = symbol->data;
 	Elf64_Ehdr*	header = (Elf64_Ehdr*) binary;
-
-	if (ELF64_ST_TYPE(data->st_info) != STT_OBJECT)
-		return (false);
 
 	if (data->st_shndx == SHN_UNDEF)
 		return (false);
@@ -271,7 +265,7 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 	else if (isWeakUnknown(symbol, strs, value) == true)
 		type[0] = 'W'; // v
 
-	else if (isLocalOrGlobal(type[0]) == true && isLocal(symbol, strs, value) == true)
+	if (isLocalOrGlobal(type[0]) == true && isLocal(symbol, strs, value) == true)
 		type[0] += 32; // v
 
 	return (type);
