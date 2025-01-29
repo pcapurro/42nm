@@ -15,15 +15,20 @@ static bool	isBSS(const char* binary, tSymbols* symbol, tStrs* strs, const int v
 	Elf64_Sym*	data = symbol->data;
 	Elf64_Ehdr*	header = (Elf64_Ehdr*) binary;
 
+	if (data->st_shndx == 0)
+		return (false);
+
 	for (int i = 0; i != header->e_shnum; i++)
 	{
 		const void*	addr = binary + header->e_shoff + (i * header->e_shentsize);
 		Elf64_Shdr*	section = (Elf64_Shdr*)addr;
 
-		if (section->sh_type != SHT_NOBITS)
-			continue ;
-		else if (i == data->st_shndx)
+		if (i == data->st_shndx)
+		{
+			if (section->sh_type != SHT_NOBITS)
+				return (false);
 			return (true);
+		}
 	}
 
 	return (false);
@@ -151,10 +156,10 @@ static bool	isLocal(tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
 
-	if (ELF64_ST_TYPE(data->st_info) == STB_LOCAL)
+	if (ELF64_ST_BIND(data->st_info) == STB_LOCAL)
 		return (true);
 
-	if (ELF64_ST_TYPE(data->st_info) == STB_WEAK && data->st_shndx == 0)
+	if (ELF64_ST_BIND(data->st_info) == STB_WEAK && data->st_shndx == 0)
 		return (true);
 
 	return (false);
@@ -172,7 +177,11 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 		type[0] = 'A'; // v
 
 	if (isBSS(binary, symbol, strs, value) == true)
-		type[0] = 'B'; // x
+		type[0] = 'B'; // v
+	// the symbol is in the '.bss' data section (= a section of uninitialized data) (SHT_NOBITS type)
+	// .bss data section:
+	// = commonly used for static/global variables uninitialized or set to zero
+	// > doesn't contain any data in the binary file, space being used during execution
 
 	if (isCommon(symbol, strs, value) == true)
 		type[0] = 'C'; // v
