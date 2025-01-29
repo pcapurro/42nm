@@ -97,6 +97,16 @@ static bool	isInitialized(const char* binary, tSymbols* symbol, tStrs* strs, con
 	return (false);
 }
 
+static bool	isIndirect(tSymbols* symbol, tStrs* strs, const int value)
+{
+	Elf64_Sym	*data = symbol->data;
+
+	if (ELF64_ST_TYPE(data->st_info) == STT_GNU_IFUNC)
+		return (true);
+
+	return (false);
+}
+
 static bool	isDebug(const char* binary, tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
@@ -167,7 +177,7 @@ static bool isLocalOrGlobal(const char type)
 	if (type == '?')
 		return (false);
 
-	if (type == 'N' || type == 'U')
+	if (type == 'N' || type == 'U' || type == 'i')
 		return (false);
 
 	return (true);
@@ -212,6 +222,9 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 
 	else if (isInitialized(binary, symbol, strs, value) == true)
 		type[0] = 'D'; // v
+
+	else if (isIndirect(symbol, strs, value) == true)
+		type[0] = 'i'; // v
 
 	else if (isDebug(binary, symbol, strs, value) == true)
 		type[0] = 'N'; // x
