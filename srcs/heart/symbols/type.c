@@ -72,6 +72,9 @@ static bool	isInitialized(const char* binary, tSymbols* symbol, tStrs* strs, con
 	if (data->st_shndx == SHN_UNDEF)
 		return (false);
 
+	if (ELF64_ST_BIND(data->st_info) == STB_WEAK)
+		return (false);
+
 	for (int i = 0; i != header->e_shnum; i++)
 	{
 		const void*	addr = binary + header->e_shoff + (i * header->e_shentsize);
@@ -103,6 +106,28 @@ static bool	isIndirect(tSymbols* symbol, tStrs* strs, const int value)
 
 	if (ELF64_ST_TYPE(data->st_info) == STT_GNU_IFUNC)
 		return (true);
+
+	return (false);
+}
+
+static bool	isNote(const char* binary, tSymbols* symbol, tStrs* strs, const int value)
+{
+	Elf64_Sym*	data = symbol->data;
+	Elf64_Ehdr*	header = (Elf64_Ehdr*) binary;
+
+	for (int i = 0; i != header->e_shnum; i++)
+	{
+		const void*	addr = binary + header->e_shoff + (i * header->e_shentsize);
+		Elf64_Shdr*	section = (Elf64_Shdr*)addr;
+
+		if (i == data->st_shndx)
+		{
+			if (section->sh_type == SHT_NOTE)
+				return (true);
+
+			return (false);
+		}
+	}
 
 	return (false);
 }
@@ -177,6 +202,9 @@ static bool	isWeakNormal(tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
 
+	if (ELF64_ST_BIND(data->st_info) == STB_WEAK)
+		return (true);
+
 	return (false);
 }
 
@@ -195,7 +223,10 @@ static bool isLocalOrGlobal(const char type)
 	if (type == '?')
 		return (false);
 
-	if (type == 'N' || type == 'U' || type == 'i')
+	if (type == 'N' || type == 'U')
+		return (false);
+
+	if (type == 'i' || type == 'u' || type == 'n')
 		return (false);
 
 	return (true);
@@ -206,9 +237,6 @@ static bool	isLocal(tSymbols* symbol, tStrs* strs, const int value)
 	Elf64_Sym*	data = symbol->data;
 
 	if (ELF64_ST_BIND(data->st_info) == STB_LOCAL)
-		return (true);
-
-	if (ELF64_ST_BIND(data->st_info) == STB_WEAK && data->st_shndx == 0)
 		return (true);
 
 	return (false);
@@ -244,6 +272,9 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 	else if (isIndirect(symbol, strs, value) == true)
 		type[0] = 'i'; // v
 
+	else if (isNote(binary, symbol, strs, value) == true)
+		type[0] = 'n'; // v
+
 	else if (isDebug(binary, symbol, strs, value) == true && value == 64)
 		type[0] = 'N'; // x
 
@@ -260,7 +291,7 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 		type[0] = 'U'; // v
 
 	else if (isWeakNormal(symbol, strs, value) == true)
-		type[0] = 'V'; // x
+		type[0] = 'V'; // v
 
 	else if (isWeakUnknown(symbol, strs, value) == true)
 		type[0] = 'W'; // v

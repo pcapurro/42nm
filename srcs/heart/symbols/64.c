@@ -1,6 +1,6 @@
 #include "../../../include/header.h"
 
-void	*initializeBinary64(const char* binary, tSymbols** symbols, tStrs** strs)
+int	initializeBinary64(const char* binary, tSymbols** symbols, tStrs** strs)
 {
 	int	symLen = 0;
 	int	strsLen = 0;
@@ -18,9 +18,12 @@ void	*initializeBinary64(const char* binary, tSymbols** symbols, tStrs** strs)
 			strsLen++;
 	}
 
+	if (symLen == 0)
+		return (1);
+
 	(*symbols) = malloc(sizeof(tSymbols) * (symLen + 1));
 	if (!(*symbols))
-		return (NULL);
+		return (-1);
 
 	for (int i = 0; i != symLen + 1; i++)
 	{
@@ -36,7 +39,7 @@ void	*initializeBinary64(const char* binary, tSymbols** symbols, tStrs** strs)
 
 	(*strs) = malloc(sizeof(tStrs) * (strsLen + 1));
 	if (!(*strs))
-		{ free(*symbols); return (NULL); }
+		{ free(*symbols); return (-1); }
 
 	for (int i = 0; i != strsLen + 1; i++)
 	{
@@ -46,7 +49,7 @@ void	*initializeBinary64(const char* binary, tSymbols** symbols, tStrs** strs)
 	}
 	(*strs)[strsLen].end = true;
 
-	return (header);
+	return (0);
 }
 
 void	registerBinary64(const char* binary, tSymbols* symbols, tStrs* strs)
@@ -76,13 +79,17 @@ void	registerBinary64(const char* binary, tSymbols* symbols, tStrs* strs)
 	}
 }
 
-void	analyzeBinary64(tInfos* infos, const int y)
+int	analyzeBinary64(tInfos* infos, const int y)
 {
+	int			value = 0;
 	tStrs*		strs = NULL;
 	tSymbols*	symbols = NULL;
 
-	if (initializeBinary64(infos->binary, &symbols, &strs) == NULL)
+	value = initializeBinary64(infos->binary, &symbols, &strs);
+	if (value == -1)
 		memoryFailed(), setToNull(infos), exit(1);
+	if (value == 1)
+		return (1);
 
 	registerBinary64(infos->binary, symbols, strs);
 	infos->binaries[y] = symbols;
@@ -102,4 +109,6 @@ void	analyzeBinary64(tInfos* infos, const int y)
 		}
 	}
 	free(strs);
+
+	return (0);
 }
