@@ -79,36 +79,3 @@ void	registerBinary64(const char* binary, tSymbols* symbols, tStrs* strs)
 	}
 }
 
-int	analyzeBinary64(tInfos* infos, const int y)
-{
-	int			value = 0;
-	tStrs*		strs = NULL;
-	tSymbols*	symbols = NULL;
-
-	value = initializeBinary64(infos->binary, &symbols, &strs);
-	if (value == -1)
-		memoryFailed(), setToNull(infos), exit(1);
-	if (value == 1)
-		return (1);
-
-	registerBinary64(infos->binary, symbols, strs);
-	infos->binaries[y] = symbols;
-
-	for (int i = 0; symbols[i].end != true; i++)
-	{
-		symbols[i].name = getName(&symbols[i], strs, 64);
-		symbols[i].address = getAddress(&symbols[i], strs, 64);
-		symbols[i].type = getType(infos->binary, &symbols[i], strs, 64);
-
-		if (!symbols[i].name || !symbols[i].type || !symbols[i].address)
-		{
-			memoryFailed();
-			free(strs);
-			setToNull(infos);
-			exit(1);
-		}
-	}
-	free(strs);
-
-	return (0);
-}

@@ -65,6 +65,47 @@ void	initializeSymbols(tInfos* infos)
 		infos->errors[i] = NULL;
 }
 
+int	analyzeBinary(tInfos* infos, const int y, const int arch)
+{
+	int			value = 0;
+	tStrs*		strs = NULL;
+	tSymbols*	symbols = NULL;
+
+	if (arch == 64)
+		value = initializeBinary64(infos->binary, &symbols, &strs);
+	if (arch == 32)
+		value = initializeBinary32(infos->binary, &symbols, &strs);
+
+	if (value == -1)
+		memoryFailed(), setToNull(infos), exit(1);
+	if (value == 1)
+		return (1);
+
+	if (arch == 64)
+		registerBinary64(infos->binary, symbols, strs);
+	if (arch == 32)
+		registerBinary32(infos->binary, symbols, strs);
+	infos->binaries[y] = symbols;
+
+	for (int i = 0; symbols[i].end != true; i++)
+	{
+		symbols[i].name = getName(&symbols[i], strs, 64);
+		symbols[i].address = getAddress(&symbols[i], strs, 64);
+		symbols[i].type = getType(infos->binary, &symbols[i], strs, 64);
+
+		if (!symbols[i].name || !symbols[i].type || !symbols[i].address)
+		{
+			memoryFailed();
+			free(strs);
+			setToNull(infos);
+			exit(1);
+		}
+	}
+	free(strs);
+
+	return (0);
+}
+
 void	getSymbols(tInfos* infos)
 {
 	tStat	fileInfos;
@@ -95,9 +136,9 @@ void	getSymbols(tInfos* infos)
 		if (value == 0)
 		{
 			if (infos->binary[4] == 2)
-				value = analyzeBinary64(infos, i);
+				value = analyzeBinary(infos, i, 64);
 			else
-				value = analyzeBinary32(infos, i);
+				value = analyzeBinary(infos, i, 32);
 
 			if (value == 1)
 				value = getError(infos, "no symbols", i);

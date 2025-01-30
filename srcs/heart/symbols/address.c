@@ -6,10 +6,10 @@ char*	getAddress(tSymbols* symbol, tStrs* strs, const int value)
 	int		number = 0;
 	char*	str = NULL;
 
-	if (value == 32)
-		number = ((Elf32_Sym *)(*symbol).data)->st_value, len = 8;
 	if (value == 64)
 		number = ((Elf64_Sym *)(*symbol).data)->st_value, len = 16;
+	if (value == 32)
+		number = ((Elf32_Sym *)(*symbol).data)->st_value, len = 8;
 
 	str = malloc(sizeof(char) * (len + 2));
 	if (!str)
@@ -22,8 +22,15 @@ char*	getAddress(tSymbols* symbol, tStrs* strs, const int value)
 
 	if (number <= 0)
 	{
-		if (((Elf64_Sym *)(*symbol).data)->st_shndx == SHN_UNDEF \
-			|| ELF64_ST_BIND(((Elf64_Sym *)(*symbol).data)->st_info) == STB_WEAK)
+		if (value == 64 && (((Elf64_Sym *)(*symbol).data)->st_shndx == SHN_UNDEF \
+			|| ELF64_ST_BIND(((Elf64_Sym *)(*symbol).data)->st_info) == STB_WEAK))
+		{
+			for (int i = 0; i != len; i++)
+				str[i] = ' ';
+		}
+
+		if (value == 32 && (((Elf32_Sym *)(*symbol).data)->st_shndx == SHN_UNDEF \
+			|| ELF32_ST_BIND(((Elf32_Sym *)(*symbol).data)->st_info) == STB_WEAK))
 		{
 			for (int i = 0; i != len; i++)
 				str[i] = ' ';

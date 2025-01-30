@@ -94,12 +94,11 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 
 void	registerBinary32(const char* binary, tSymbols* symbols, tStrs* strs);
 int		initializeBinary32(const char* binary, tSymbols** symbols, tStrs** strs);
-int		analyzeBinary32(tInfos* infos, const int y);
 
 void	registerBinary64(const char* binary, tSymbols* symbols, tStrs* strs);
 int		initializeBinary64(const char* binary, tSymbols** symbols, tStrs** strs);
-int		analyzeBinary64(tInfos* infos, const int y);
 
+int		analyzeBinary(tInfos* infos, const int y, const int arch);
 void	getSymbols(tInfos* infos);
 
 void	*orderSymbols(void** symbols);
