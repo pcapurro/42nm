@@ -88,14 +88,14 @@ bool	isELF(const char* binary, const long int len);
 
 int		getError(tInfos* infos, const char* message, const int i);
 
-char*	getName(tSymbols* symbol, tStrs* strs, const int value);
-char*	getAddress(tSymbols* symbol, tStrs* strs, const int value);
-char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int arch);
+char*	getName(tSymbols* symbol, tStrs* strs, int* value, const int arch);
+char*	getAddress(tSymbols* symbol, tStrs* strs, const int arch);
+char*	getType(const char* binary, tSymbols* symbol, int* value, const int arch);
 
-void	registerBinary32(const char* binary, tSymbols* symbols, tStrs* strs);
+int		registerBinary32(const char* binary, tSymbols* symbols, tStrs* strs);
 int		initializeBinary32(const char* binary, tSymbols** symbols, tStrs** strs);
 
-void	registerBinary64(const char* binary, tSymbols* symbols, tStrs* strs);
+int		registerBinary64(const char* binary, tSymbols* symbols, tStrs* strs);
 int		initializeBinary64(const char* binary, tSymbols** symbols, tStrs** strs);
 
 int		analyzeBinary(tInfos* infos, const int y, const int arch);

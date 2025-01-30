@@ -1,6 +1,6 @@
 #include "../../../include/header.h"
 
-static bool isInvalid(const char* binary, tSymbols* symbol, tStrs* strs, const int arch)
+static bool isInvalid(const char* binary, tSymbols* symbol, const int arch)
 {
 	Elf64_Sym*	data64 = symbol->data;
 	Elf32_Sym*	data32 = symbol->data;
@@ -35,7 +35,7 @@ static bool isInvalid(const char* binary, tSymbols* symbol, tStrs* strs, const i
 	return (false);
 }
 
-static bool	isAbsolute(tSymbols* symbol, tStrs* strs, const int arch)
+static bool	isAbsolute(tSymbols* symbol, const int arch)
 {
 	Elf64_Sym*	data64 = symbol->data;
 	Elf32_Sym*	data32 = symbol->data;
@@ -49,7 +49,7 @@ static bool	isAbsolute(tSymbols* symbol, tStrs* strs, const int arch)
 	return (false);
 }
 
-static bool	isBSS(const char* binary, tSymbols* symbol, tStrs* strs, const int arch)
+static bool	isBSS(const char* binary, tSymbols* symbol, const int arch)
 {
 	if (arch == 64)
 	{
@@ -100,7 +100,7 @@ static bool	isBSS(const char* binary, tSymbols* symbol, tStrs* strs, const int a
 	return (false);
 }
 
-static bool	isCommon(tSymbols* symbol, tStrs* strs, const int arch)
+static bool	isCommon(tSymbols* symbol, const int arch)
 {
 	Elf64_Sym*	data64 = symbol->data;
 	Elf32_Sym*	data32 = symbol->data;
@@ -114,7 +114,7 @@ static bool	isCommon(tSymbols* symbol, tStrs* strs, const int arch)
 	return (false);
 }
 
-static bool	isInitialized(const char* binary, tSymbols* symbol, tStrs* strs, const int arch)
+static bool	isInitialized(const char* binary, tSymbols* symbol, const int arch)
 {
 	if (arch == 64)
 	{
@@ -187,7 +187,7 @@ static bool	isInitialized(const char* binary, tSymbols* symbol, tStrs* strs, con
 	return (false);
 }
 
-static bool	isIndirect(tSymbols* symbol, tStrs* strs, const int arch)
+static bool	isIndirect(tSymbols* symbol, const int arch)
 {
 	Elf64_Sym*	data64 = symbol->data;
 	Elf32_Sym*	data32 = symbol->data;
@@ -201,7 +201,7 @@ static bool	isIndirect(tSymbols* symbol, tStrs* strs, const int arch)
 	return (false);
 }
 
-static bool	isReadMode(const char* binary, tSymbols* symbol, tStrs* strs, const int arch)
+static bool	isReadMode(const char* binary, tSymbols* symbol, const int arch)
 {
 	if (arch == 64)
 	{
@@ -248,7 +248,7 @@ static bool	isReadMode(const char* binary, tSymbols* symbol, tStrs* strs, const 
 	return (false);
 }
 
-static bool	isText(const char* binary, tSymbols* symbol, tStrs* strs, const int arch)
+static bool	isText(const char* binary, tSymbols* symbol, const int arch)
 {
 	if (arch == 64)
 	{
@@ -301,7 +301,7 @@ static bool	isText(const char* binary, tSymbols* symbol, tStrs* strs, const int 
 	return (false);
 }
 
-static bool	isUndefinedWeak(tSymbols* symbol, tStrs* strs, const int arch)
+static bool	isUndefinedWeak(tSymbols* symbol, const int arch)
 {
 	Elf64_Sym*	data64 = symbol->data;
 	Elf32_Sym*	data32 = symbol->data;
@@ -327,7 +327,7 @@ static bool	isUndefinedWeak(tSymbols* symbol, tStrs* strs, const int arch)
 	return (false);
 }
 
-static bool	isUndefined(tSymbols* symbol, tStrs* strs, const int arch)
+static bool	isUndefined(tSymbols* symbol, const int arch)
 {
 	Elf64_Sym*	data64 = symbol->data;
 	Elf32_Sym*	data32 = symbol->data;
@@ -343,7 +343,7 @@ static bool	isUndefined(tSymbols* symbol, tStrs* strs, const int arch)
 	return (false);
 }
 
-static bool	isWeakNormal(tSymbols* symbol, tStrs* strs, const int arch)
+static bool	isWeakNormal(tSymbols* symbol, const int arch)
 {
 	Elf64_Sym*	data64 = symbol->data;
 	Elf32_Sym*	data32 = symbol->data;
@@ -359,7 +359,7 @@ static bool	isWeakNormal(tSymbols* symbol, tStrs* strs, const int arch)
 	return (false);
 }
 
-static bool	isWeakUnknown(tSymbols* symbol, tStrs* strs, const int arch)
+static bool	isWeakUnknown(tSymbols* symbol, const int arch)
 {
 	Elf64_Sym*	data64 = symbol->data;
 	Elf32_Sym*	data32 = symbol->data;
@@ -375,7 +375,7 @@ static bool	isWeakUnknown(tSymbols* symbol, tStrs* strs, const int arch)
 	return (false);
 }
 
-static bool	isGlobal(tSymbols* symbol, tStrs* strs, const int arch)
+static bool	isGlobal(tSymbols* symbol, const int arch)
 {
 	Elf64_Sym*	data64 = symbol->data;
 	Elf32_Sym*	data32 = symbol->data;
@@ -411,7 +411,7 @@ static bool isLocalOrGlobal(const char type)
 	return (true);
 }
 
-char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int arch)
+char*	getType(const char* binary, tSymbols* symbol, int* value, const int arch)
 {
 	char*	type = NULL;
 
@@ -419,43 +419,43 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int arch)
 	if (!type)
 		return (NULL);
 
-	if (isInvalid(binary, symbol, strs, arch) == true)
+	if (isInvalid(binary, symbol, arch) == true)
 		type[0] = '!';
 
-	else if (isAbsolute(symbol, strs, arch) == true)
+	else if (isAbsolute(symbol, arch) == true)
 		type[0] = 'A';
 
-	else if (isBSS(binary, symbol, strs, arch) == true)
+	else if (isBSS(binary, symbol, arch) == true)
 		type[0] = 'B';
 
-	else if (isCommon(symbol, strs, arch) == true)
+	else if (isCommon(symbol, arch) == true)
 		type[0] = 'C';
 
-	else if (isInitialized(binary, symbol, strs, arch) == true)
+	else if (isInitialized(binary, symbol, arch) == true)
 		type[0] = 'D';
 
-	else if (isUndefined(symbol, strs, arch) == true)
+	else if (isUndefined(symbol, arch) == true)
 		type[0] = 'U';
 
-	else if (isWeakNormal(symbol, strs, arch) == true)
+	else if (isWeakNormal(symbol, arch) == true)
 		type[0] = 'V';
 
-	else if (isWeakUnknown(symbol, strs, arch) == true)
+	else if (isWeakUnknown(symbol, arch) == true)
 		type[0] = 'W';
 
-	else if (isUndefinedWeak(symbol, strs, arch) == true)
+	else if (isUndefinedWeak(symbol, arch) == true)
 		type[0] = 'u';
 
-	else if (isReadMode(binary, symbol, strs, arch) == true)
+	else if (isReadMode(binary, symbol, arch) == true)
 		type[0] = 'R';
 
-	else if (isText(binary, symbol, strs, arch) == true)
+	else if (isText(binary, symbol, arch) == true)
 		type[0] = 'T';
 
-	else if (isIndirect(symbol, strs, arch) == true)
+	else if (isIndirect(symbol, arch) == true)
 		type[0] = 'i';
 
-	if (isGlobal(symbol, strs, arch) == false \
+	if (isGlobal(symbol, arch) == false \
 		&& isLocalOrGlobal(type[0]) == true)
 		type[0] += 32;
 

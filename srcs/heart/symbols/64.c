@@ -52,7 +52,7 @@ int	initializeBinary64(const char* binary, tSymbols** symbols, tStrs** strs)
 	return (0);
 }
 
-void	registerBinary64(const char* binary, tSymbols* symbols, tStrs* strs)
+int		registerBinary64(const char* binary, tSymbols* symbols, tStrs* strs)
 {
 	Elf64_Ehdr*	header = (Elf64_Ehdr*) binary;
 
@@ -77,5 +77,6 @@ void	registerBinary64(const char* binary, tSymbols* symbols, tStrs* strs)
 			j++;
 		}
 	}
-}
 
+	return (0);
+}

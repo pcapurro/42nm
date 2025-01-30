@@ -78,20 +78,26 @@ int	analyzeBinary(tInfos* infos, const int y, const int arch)
 
 	if (value == -1)
 		memoryFailed(), setToNull(infos), exit(1);
-	if (value == 1)
-		return (1);
+	if (value == 1 || value == 2)
+		{ free(strs); return (value); }
 
 	if (arch == 64)
-		registerBinary64(infos->binary, symbols, strs);
+		value = registerBinary64(infos->binary, symbols, strs);
 	if (arch == 32)
-		registerBinary32(infos->binary, symbols, strs);
+		value = registerBinary32(infos->binary, symbols, strs);
 	infos->binaries[y] = symbols;
+
+	if (value == 2)
+		{ free(strs); return (value); }
 
 	for (int i = 0; symbols[i].end != true; i++)
 	{
-		symbols[i].name = getName(&symbols[i], strs, 64);
-		symbols[i].address = getAddress(&symbols[i], strs, 64);
-		symbols[i].type = getType(infos->binary, &symbols[i], strs, 64);
+		symbols[i].name = getName(&symbols[i], strs, &value, arch);
+		symbols[i].address = getAddress(&symbols[i], strs, arch);
+		symbols[i].type = getType(infos->binary, &symbols[i], &value, arch);
+
+		if (value != 0)
+			{ free(strs); return (2); }
 
 		if (!symbols[i].name || !symbols[i].type || !symbols[i].address)
 		{
@@ -142,6 +148,8 @@ void	getSymbols(tInfos* infos)
 
 			if (value == 1)
 				value = getError(infos, "no symbols", i);
+			if (value == 2)
+				value = getError(infos, "corrupted or invalid symbols", i);
 		}
 
 		munmap(infos->binary, fileInfos.st_size);

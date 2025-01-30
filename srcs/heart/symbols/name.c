@@ -1,6 +1,6 @@
 #include "../../../include/header.h"
 
-char*	getName(tSymbols* symbol, tStrs* strs, const int value)
+char*	getName(tSymbols* symbol, tStrs* strs, int* value, const int arch)
 {
 	char*	name = "NULL";
 
@@ -8,9 +8,9 @@ char*	getName(tSymbols* symbol, tStrs* strs, const int value)
 	{
 		if (strs[i].id == (*symbol).link)
 		{
-			if (value == 64)
+			if (arch == 64)
 				name = getDup(strs[i].str + ((Elf64_Sym *)(*symbol).data)->st_name);
-			if (value == 32)
+			if (arch == 32)
 				name = getDup(strs[i].str + ((Elf32_Sym *)(*symbol).data)->st_name);
 
 			break ;

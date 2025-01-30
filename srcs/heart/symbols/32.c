@@ -52,7 +52,7 @@ int		initializeBinary32(const char* binary, tSymbols** symbols, tStrs** strs)
 	return (0);
 }
 
-void	registerBinary32(const char* binary, tSymbols* symbols, tStrs* strs)
+int		registerBinary32(const char* binary, tSymbols* symbols, tStrs* strs)
 {
 	Elf32_Ehdr*	header = (Elf32_Ehdr*) binary;
 
@@ -77,4 +77,6 @@ void	registerBinary32(const char* binary, tSymbols* symbols, tStrs* strs)
 			j++;
 		}
 	}
+
+	return (0);
 }
