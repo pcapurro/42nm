@@ -97,8 +97,8 @@ int	analyzeBinary64(tInfos* infos, const int y)
 	for (int i = 0; symbols[i].end != true; i++)
 	{
 		symbols[i].name = getName(&symbols[i], strs, 64);
-		symbols[i].type = getType(infos->binary, &symbols[i], strs, 64);
 		symbols[i].address = getAddress(&symbols[i], strs, 64);
+		symbols[i].type = getType(infos->binary, &symbols[i], strs, 64);
 
 		if (!symbols[i].name || !symbols[i].type || !symbols[i].address)
 		{

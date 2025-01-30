@@ -23,7 +23,7 @@ char*	getAddress(tSymbols* symbol, tStrs* strs, const int value)
 	if (number <= 0)
 	{
 		if (((Elf64_Sym *)(*symbol).data)->st_shndx == SHN_UNDEF \
-			|| ELF64_ST_TYPE(((Elf64_Sym *)(*symbol).data)->st_info) == STB_WEAK)
+			|| ELF64_ST_BIND(((Elf64_Sym *)(*symbol).data)->st_info) == STB_WEAK)
 		{
 			for (int i = 0; i != len; i++)
 				str[i] = ' ';

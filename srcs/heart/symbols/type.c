@@ -110,36 +110,6 @@ static bool	isIndirect(tSymbols* symbol, tStrs* strs, const int value)
 	return (false);
 }
 
-static bool	isNote(const char* binary, tSymbols* symbol, tStrs* strs, const int value)
-{
-	Elf64_Sym*	data = symbol->data;
-	Elf64_Ehdr*	header = (Elf64_Ehdr*) binary;
-
-	for (int i = 0; i != header->e_shnum; i++)
-	{
-		const void*	addr = binary + header->e_shoff + (i * header->e_shentsize);
-		Elf64_Shdr*	section = (Elf64_Shdr*)addr;
-
-		if (i == data->st_shndx)
-		{
-			if (section->sh_type == SHT_NOTE && (section->sh_flags & SHF_WRITE) == 0)
-				return (true);
-
-			return (false);
-		}
-	}
-
-	return (false);
-}
-
-static bool	isDebug(const char* binary, tSymbols* symbol, tStrs* strs, const int value)
-{
-	Elf64_Sym*	data = symbol->data;
-	Elf64_Ehdr*	header = (Elf64_Ehdr*) binary;
-
-	return (false);
-}
-
 static bool	isReadMode(const char* binary, tSymbols* symbol, tStrs* strs, const int value)
 {
 	Elf64_Sym*	data = symbol->data;
@@ -178,7 +148,8 @@ static bool	isText(const char* binary, tSymbols* symbol, tStrs* strs, const int 
 
 		if (i == data->st_shndx)
 		{
-			if ((section->sh_flags & SHF_EXECINSTR) != 0 && (section->sh_flags & SHF_ALLOC) != 0)
+			if ((section->sh_flags & SHF_EXECINSTR) != 0 && (section->sh_flags & SHF_ALLOC) != 0 \
+				&& section->sh_type == SHT_PROGBITS)
 				return (true);
 
 			return (false);
@@ -236,7 +207,7 @@ static bool isLocalOrGlobal(const char type)
 	if (type == '?')
 		return (false);
 
-	if (type == 'N' || type == 'U')
+	if (type == 'U')
 		return (false);
 
 	if (type == 'i' || type == 'u' || type == 'n')
@@ -268,47 +239,41 @@ char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value
 		type[0] = '!';
 
 	else if (isAbsolute(symbol, strs, value) == true)
-		type[0] = 'A'; // v
+		type[0] = 'A';
 
 	else if (isBSS(binary, symbol, strs, value) == true)
-		type[0] = 'B'; // v
+		type[0] = 'B';
 
 	else if (isCommon(symbol, strs, value) == true)
-		type[0] = 'C'; // v
+		type[0] = 'C';
 
 	else if (isInitialized(binary, symbol, strs, value) == true)
-		type[0] = 'D'; // v
-
-	else if (isIndirect(symbol, strs, value) == true)
-		type[0] = 'i'; // v
-
-	else if (isReadMode(binary, symbol, strs, value) == true)
-		type[0] = 'R'; // v
-
-	else if (isNote(binary, symbol, strs, value) == true)
-		type[0] = 'n'; // v
-
-	else if (isDebug(binary, symbol, strs, value) == true)
-		type[0] = 'N'; // x
-
-	else if (isText(binary, symbol, strs, value) == true)
-		type[0] = 'T'; // v
-
-	else if (isUndefinedWeak(symbol, strs, value) == true)
-		type[0] = 'u'; // v
+		type[0] = 'D';
 
 	else if (isUndefined(symbol, strs, value) == true)
-		type[0] = 'U'; // v
+		type[0] = 'U';
 
 	else if (isWeakNormal(symbol, strs, value) == true)
-		type[0] = 'V'; // v
+		type[0] = 'V';
 
 	else if (isWeakUnknown(symbol, strs, value) == true)
-		type[0] = 'W'; // v
+		type[0] = 'W';
+
+	else if (isUndefinedWeak(symbol, strs, value) == true)
+		type[0] = 'u';
+
+	else if (isReadMode(binary, symbol, strs, value) == true)
+		type[0] = 'R';
+
+	else if (isText(binary, symbol, strs, value) == true)
+		type[0] = 'T';
+
+	else if (isIndirect(symbol, strs, value) == true)
+		type[0] = 'i';
 
 	if (isLocalOrGlobal(type[0]) == true \
 		&& isGlobal(symbol, strs, value) == false)
-		type[0] += 32; // v
+		type[0] += 32;
 
 	return (type);
 }
