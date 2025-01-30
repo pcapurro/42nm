@@ -70,7 +70,7 @@ char*	getJoin(const char* s1, const char* s2, const char* s3);
 int		getStrLen(const char* str);
 
 void	freeArray(char** array);
-void	freeBinaries(void** binaries);
+void	freeBinary(void* binary);
 
 bool	isSame(const char* str1, const char* str2);
 

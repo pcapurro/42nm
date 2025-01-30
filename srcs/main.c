@@ -28,9 +28,14 @@ void	setToNull(tInfos* infos)
 		{
 			if (infos->errors[i] != NULL)
 				free(infos->errors[i]);
+			if (infos->binaries != NULL && infos->binaries[i] != NULL)
+				freeBinary(infos->binaries[i]);
 		}
 		free(infos->errors);
 	}
+
+	if (infos->binaries != NULL)
+		free(infos->binaries);
 
 	if (infos->binary != NULL)
 		munmap(infos->binary, infos->binaryLen);
@@ -40,9 +45,6 @@ void	setToNull(tInfos* infos)
 
 	if (infos->paths != NULL)
 		freeArray(infos->paths);
-
-	if (infos->binaries != NULL)
-		freeBinaries(infos->binaries);
 }
 
 int	main(const int argc, const char **argv)

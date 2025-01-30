@@ -10,26 +10,22 @@ void	freeArray(char** array)
 	}
 }
 
-void	freeBinaries(void** binaries)
+void	freeBinary(void* binary)
 {
 	tSymbols*	symbol;
 
-	for (int i = 0; binaries != NULL && binaries[i] != NULL; i++)
+	for (int k = 0; ((tSymbols*)binary)[k].end != true; k++)
 	{
-		for (int k = 0; ((tSymbols*)binaries[i])[k].end != true; k++)
-		{
-			symbol = binaries[i];
+		symbol = binary;
 
-			if (symbol[k].address != NULL)
-				free(symbol[k].address);
-			if (symbol[k].type != NULL)
-				free(symbol[k].type);
-			if (symbol[k].name != NULL)
-				free(symbol[k].name);
-		}
-		free(binaries[i]);
+		if (symbol[k].address != NULL)
+			free(symbol[k].address);
+		if (symbol[k].type != NULL)
+			free(symbol[k].type);
+		if (symbol[k].name != NULL)
+			free(symbol[k].name);
 	}
-	free(binaries);
+	free(binary);
 }
 
 bool	isSame(const char* str1, const char* str2)

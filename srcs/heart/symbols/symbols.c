@@ -90,20 +90,18 @@ void	getSymbols(tInfos* infos)
 		if (infos->binary == MAP_FAILED)
 			{ value = getError(infos, NULL, i); close(infos->fd); continue ; }
 		if (isELF(infos->binary, infos->binaryLen) == false)
-		{
 			value = getError(infos, "file format not recognized", i);
-			munmap(infos->binary, fileInfos.st_size);
-			close(infos->fd);
-			continue ;
+
+		if (value == 0)
+		{
+			if (infos->binary[4] == 2)
+				value = analyzeBinary64(infos, i);
+			else
+				value = analyzeBinary32(infos, i);
+
+			if (value == 1)
+				value = getError(infos, "no symbols", i);
 		}
-
-		if (infos->binary[4] == 2)
-			value = analyzeBinary64(infos, i);
-		else
-			value = analyzeBinary32(infos, i);
-
-		if (value == 1)
-			value = getError(infos, "no symbols", i);
 
 		munmap(infos->binary, fileInfos.st_size);
 		close(infos->fd);
