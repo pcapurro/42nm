@@ -90,7 +90,7 @@ int		getError(tInfos* infos, const char* message, const int i);
 
 char*	getName(tSymbols* symbol, tStrs* strs, const int value);
 char*	getAddress(tSymbols* symbol, tStrs* strs, const int value);
-char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int value);
+char*	getType(const char* binary, tSymbols* symbol, tStrs* strs, const int arch);
 
 void	registerBinary32(const char* binary, tSymbols* symbols, tStrs* strs);
 int		initializeBinary32(const char* binary, tSymbols** symbols, tStrs** strs);
