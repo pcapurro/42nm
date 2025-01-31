@@ -27,7 +27,6 @@ struct sInfos
 	bool		noSort;
 	bool		reverseSort;
 
-	bool		options;
 	char**		paths;
 	void**		binaries;
 
@@ -92,12 +91,8 @@ char*	getName(tSymbols* symbol, tStrs* strs, int* value, const int arch);
 char*	getAddress(tSymbols* symbol, tStrs* strs, const int arch);
 char*	getType(const char* binary, tSymbols* symbol, int* value, const int arch);
 
-int		registerBinary32(const char* binary, tSymbols* symbols, tStrs* strs);
-int		initializeBinary32(const char* binary, tSymbols** symbols, tStrs** strs);
-
-int		registerBinary64(const char* binary, tSymbols* symbols, tStrs* strs);
-int		initializeBinary64(const char* binary, tSymbols** symbols, tStrs** strs);
-
+int		registerBinary(const char* binary, tSymbols* symbols, tStrs* strs, const int arch);
+int		initializeBinary(const char* binary, tSymbols** symbols, tStrs** strs, const int arch);
 int		analyzeBinary(tInfos* infos, const int y, const int arch);
 void	getSymbols(tInfos* infos);
 

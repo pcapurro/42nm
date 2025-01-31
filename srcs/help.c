@@ -6,7 +6,6 @@ void	printHelp(void)
 	writeStr("List symbols in [file(s)] (a.out by default).\n\n", 1);
 
 	writeStr("The options are:\n", 1);
-	writeStr("-a, --debug-syms	Display debugger-only symbols\n", 1);
 	writeStr("-g, --extern-only	Display only external symbols\n", 1);
 	writeStr("-p, --no-sort		Do not sort the symbols\n", 1);
 	writeStr("-r, --reverse-sort	Reverse the sense of the sort\n", 1);
