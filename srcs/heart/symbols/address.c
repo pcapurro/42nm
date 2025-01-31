@@ -20,7 +20,7 @@ char*	getAddress(tSymbols* symbol, const int arch)
 	str[len] = ' ';
 	str[len + 1] = '\0';
 
-	if (number <= 0)
+	if (number <= 0 || symbol->type[0] == 'U')
 	{
 		if (arch == 64 && (((Elf64_Sym *)(*symbol).data)->st_shndx == SHN_UNDEF \
 			|| ELF64_ST_BIND(((Elf64_Sym *)(*symbol).data)->st_info) == STB_WEAK))

@@ -202,8 +202,8 @@ int	analyzeBinary(tInfos* infos, const int y, const int arch)
 	for (int i = 0; symbols[i].end != true; i++)
 	{
 		symbols[i].name = getName(&symbols[i], strs, &value, len, arch);
-		symbols[i].address = getAddress(&symbols[i], arch);
 		symbols[i].type = getType(infos->binary, &symbols[i], &value, len, arch);
+		symbols[i].address = getAddress(&symbols[i], arch);
 
 		if (value != 0)
 			{ free(strs); return (2); }
