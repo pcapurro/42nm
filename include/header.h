@@ -88,7 +88,7 @@ bool	isELF(const char* binary, const long int len);
 int		getError(tInfos* infos, const char* message, const int i);
 
 char*	getName(tSymbols* symbol, tStrs* strs, int* value, const int len, const int arch);
-char*	getAddress(tSymbols* symbol, tStrs* strs, const int arch);
+char*	getAddress(tSymbols* symbol, const int arch);
 char*	getType(const char* binary, tSymbols* symbol, int* value, const int len, const int arch);
 
 int		registerBinary(tInfos* infos, tSymbols* symbols, tStrs* strs, const int arch);

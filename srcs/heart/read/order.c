@@ -69,6 +69,8 @@ void	*orderSymbols(void** array)
 	free(copyArray);
 	free(*array);
 	(*array) = newArray;
+
+	return (newArray);
 }
 
 void	*reverseSymbols(void** array)

@@ -1,6 +1,6 @@
 #include "../../../include/header.h"
 
-char*	getAddress(tSymbols* symbol, tStrs* strs, const int arch)
+char*	getAddress(tSymbols* symbol, const int arch)
 {
 	int		len = 0;
 	int		number = 0;

@@ -49,6 +49,8 @@ int	main(const int argc, const char **argv)
 {
 	tInfos	infos;
 
+	(void) argc;
+
 	setToDefault(&infos);
 
 	getOptions(&infos, argv + 1);
@@ -60,8 +62,5 @@ int	main(const int argc, const char **argv)
 
 	setToNull(&infos);
 
-	if (infos.returnValue != 0)
-		return (infos.returnValue);
-
-	return (0);
+	return (infos.returnValue);
 }

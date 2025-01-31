@@ -7,10 +7,6 @@ static bool isInvalid(tSymbols* symbol, const int arch)
 
 	if (arch == 64)
 	{
-		if (data64->st_value < 0)
-			return (true);
-		// invalid address
-
 		if (ELF64_ST_TYPE(data64->st_info) == STT_SECTION)
 			return (true);
 		// the symbol represents a section, not a real symbol
@@ -22,9 +18,6 @@ static bool isInvalid(tSymbols* symbol, const int arch)
 
 	if (arch == 32)
 	{
-		if (data32->st_value < 0)
-			return (true);
-
 		if (ELF32_ST_TYPE(data32->st_info) == STT_SECTION)
 			return (true);
 
@@ -154,8 +147,8 @@ static bool	isInitialized(const char* binary, tSymbols* symbol, int* value, cons
 					|| section->sh_type == SHT_NOTE)
 					return (false);
 
-				if (section->sh_flags & SHF_ALLOC != 0)
-					return (true);
+				// if ((section->sh_flags & SHF_ALLOC) != 0)
+					// return (true);
 
 				return (false);
 			}
@@ -192,8 +185,8 @@ static bool	isInitialized(const char* binary, tSymbols* symbol, int* value, cons
 					|| section->sh_type == SHT_NOTE)
 					return (false);
 
-				if (section->sh_flags & SHF_ALLOC != 0)
-					return (true);
+				// if ((section->sh_flags & SHF_ALLOC) != 0)
+					// return (true);
 
 				return (false);
 			}

@@ -111,7 +111,7 @@ int		registerBinary(tInfos* infos, tSymbols* symbols, tStrs* strs, const int arc
 
 			if (section->sh_type == SHT_SYMTAB)
 			{
-				for (int l = 1; l != section->sh_size / section->sh_entsize; l++)
+				for (long unsigned int l = 1; l != (section->sh_size / section->sh_entsize); l++)
 				{
 					value = section->sh_offset + l * section->sh_entsize;
 					if (value <= 0 || value >= len)
@@ -124,7 +124,7 @@ int		registerBinary(tInfos* infos, tSymbols* symbols, tStrs* strs, const int arc
 			}
 			if (section->sh_type == SHT_STRTAB)
 			{
-				if (section->sh_offset <= 0 || section->sh_offset >= len)
+				if (section->sh_offset <= 0 || section->sh_offset >= (long unsigned int) len)
 					return (2);
 
 				strs[j].str = ((char*) infos->binary) + section->sh_offset;
@@ -147,7 +147,7 @@ int		registerBinary(tInfos* infos, tSymbols* symbols, tStrs* strs, const int arc
 
 			if (section->sh_type == SHT_SYMTAB)
 			{
-				for (int l = 1; l != section->sh_size / section->sh_entsize; l++)
+				for (long unsigned int l = 1; l != section->sh_size / section->sh_entsize; l++)
 				{
 					value = section->sh_offset + l * section->sh_entsize;
 					if (value <= 0 || value >= len)
@@ -160,7 +160,7 @@ int		registerBinary(tInfos* infos, tSymbols* symbols, tStrs* strs, const int arc
 			}
 			if (section->sh_type == SHT_STRTAB)
 			{
-				if (section->sh_offset <= 0 || section->sh_offset >= len)
+				if (section->sh_offset <= 0 || section->sh_offset >= (long unsigned int) len)
 					return (2);
 
 				strs[j].str = ((char*) infos->binary) + section->sh_offset;
@@ -202,7 +202,7 @@ int	analyzeBinary(tInfos* infos, const int y, const int arch)
 	for (int i = 0; symbols[i].end != true; i++)
 	{
 		symbols[i].name = getName(&symbols[i], strs, &value, len, arch);
-		symbols[i].address = getAddress(&symbols[i], strs, arch);
+		symbols[i].address = getAddress(&symbols[i], arch);
 		symbols[i].type = getType(infos->binary, &symbols[i], &value, len, arch);
 
 		if (value != 0)
