@@ -12,8 +12,6 @@ void	setToDefault(tInfos* infos)
 	infos->returnValue = 0;
 	infos->errors = NULL;
 
-	infos->externOnly = false;
-	infos->undefinedOnly = false;
 	infos->noSort = false;
 	infos->reverseSort = false;
 }

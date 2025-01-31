@@ -21,9 +21,6 @@ typedef struct stat tStat;
 
 struct sInfos
 {
-	bool		externOnly;
-	bool		undefinedOnly;
-
 	bool		noSort;
 	bool		reverseSort;
 

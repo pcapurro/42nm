@@ -6,10 +6,8 @@ void	printHelp(void)
 	writeStr("List symbols in [file(s)] (a.out by default).\n\n", 1);
 
 	writeStr("The options are:\n", 1);
-	writeStr("-g, --extern-only	Display only external symbols\n", 1);
 	writeStr("-p, --no-sort		Do not sort the symbols\n", 1);
 	writeStr("-r, --reverse-sort	Reverse the sense of the sort\n", 1);
-	writeStr("-u, --undefined-only	Display only undefined symbols\n", 1);
 	writeStr("-h, --help		Display this information\n", 1);
 }
 

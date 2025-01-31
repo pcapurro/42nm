@@ -9,20 +9,12 @@ static void	writeLine(const char* address, const char* type, const char* name)
 	writeStr("\n", 1);
 }
 
-static bool	isValid(tInfos* infos, const char type)
+static bool	isValid(const char type)
 {
 	if (type == '!')
 		return (false);
 
 	if (type == 'a' || type == 'A')
-		return (false);
-
-	if (infos->undefinedOnly == true \
-		&& type != 'w' && type != 'u' && type != 'U')
-		return (false);
-
-	if (infos->externOnly == true \
-		&& type != 'w' && type != 'W' && type > 96)
 		return (false);
 
 	return (true);
@@ -50,7 +42,7 @@ void	listSymbols(tInfos* infos)
 			{
 				tSymbols*	symbol = (infos->binaries[i]);
 
-				if (isValid(infos, symbol[k].type[0]) == true)
+				if (isValid(symbol[k].type[0]) == true)
 					writeLine(symbol[k].address, symbol[k].type, symbol[k].name);
 			}
 		}
