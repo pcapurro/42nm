@@ -433,9 +433,6 @@ char*	getType(const char* binary, tSymbols* symbol, int* value, const int len, c
 	else if (isWeakNormal(symbol, arch) == true)
 		type[0] = 'V';
 
-	else if (isReadMode(binary, symbol, value, len, arch) == true)
-		type[0] = 'R';
-
 	else if (isWeakUnknown(symbol, arch) == true)
 		type[0] = 'W';
 
@@ -444,6 +441,9 @@ char*	getType(const char* binary, tSymbols* symbol, int* value, const int len, c
 
 	else if (isUniqueGlobal(symbol, arch) == true)
 		type[0] = 'u';
+
+	else if (isReadMode(binary, symbol, value, len, arch) == true)
+		type[0] = 'R';
 
 	else if (isInitialized(binary, symbol, value, len, arch) == true)
 		type[0] = 'D';
