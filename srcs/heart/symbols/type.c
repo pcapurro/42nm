@@ -312,28 +312,16 @@ static bool	isText(const char* binary, tSymbols* symbol, int* value, const int l
 	return (false);
 }
 
-static bool	isUndefinedWeak(tSymbols* symbol, const int arch)
+static bool	isUniqueGlobal(tSymbols* symbol, const int arch)
 {
 	Elf64_Sym*	data64 = symbol->data;
 	Elf32_Sym*	data32 = symbol->data;
 
-	if (arch == 64)
-	{
-		if (ELF64_ST_BIND(data64->st_info) != STB_GLOBAL)
-			return (false);
+	if (arch == 64 && ELF64_ST_BIND(data64->st_info) == STB_GNU_UNIQUE)
+		return (true);
 
-		if (data64->st_shndx == SHN_UNDEF && ELF64_ST_BIND(data64->st_info) == STB_WEAK)
-			return (true);
-	}
-
-	if (arch == 32)
-	{
-		if (ELF32_ST_BIND(data32->st_info) != STB_GLOBAL)
-			return (false);
-
-		if (data32->st_shndx == SHN_UNDEF && ELF32_ST_BIND(data32->st_info) == STB_WEAK)
-			return (true);
-	}
+	if (arch == 32 && ELF32_ST_BIND(data32->st_info) == STB_GNU_UNIQUE)
+		return (true);
 
 	return (false);
 }
@@ -448,17 +436,17 @@ char*	getType(const char* binary, tSymbols* symbol, int* value, const int len, c
 	else if (isReadMode(binary, symbol, value, len, arch) == true)
 		type[0] = 'R';
 
-	else if (isInitialized(binary, symbol, value, len, arch) == true)
-		type[0] = 'D';
+	else if (isWeakUnknown(symbol, arch) == true)
+		type[0] = 'W';
 
 	else if (isUndefined(symbol, arch) == true)
 		type[0] = 'U';
 
-	else if (isWeakUnknown(symbol, arch) == true)
-		type[0] = 'W';
-
-	else if (isUndefinedWeak(symbol, arch) == true)
+	else if (isUniqueGlobal(symbol, arch) == true)
 		type[0] = 'u';
+
+	else if (isInitialized(binary, symbol, value, len, arch) == true)
+		type[0] = 'D';
 
 	else if (isText(binary, symbol, value, len, arch) == true)
 		type[0] = 'T';
