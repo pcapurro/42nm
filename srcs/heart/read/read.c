@@ -14,11 +14,15 @@ static bool	isValid(tInfos* infos, const char type)
 	if (type == '!')
 		return (false);
 
-	if (infos->undefinedOnly == true && type != 'w' && type != 'u' && type != 'U')
+	if (type == 'a' || type == 'A')
 		return (false);
-	if (type == 'a' || type == 'A' || type == 'N')
+
+	if (infos->undefinedOnly == true \
+		&& type != 'w' && type != 'u' && type != 'U')
 		return (false);
-	if (infos->externOnly == true && type > 96)
+
+	if (infos->externOnly == true \
+		&& type != 'w' && type != 'W' && type > 96)
 		return (false);
 
 	return (true);
