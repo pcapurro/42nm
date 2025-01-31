@@ -5,25 +5,11 @@ static bool isInvalid(tSymbols* symbol, const int arch)
 	Elf64_Sym*	data64 = symbol->data;
 	Elf32_Sym*	data32 = symbol->data;
 
-	if (arch == 64)
-	{
-		if (ELF64_ST_TYPE(data64->st_info) == STT_SECTION)
-			return (true);
-		// the symbol represents a section, not a real symbol
+	if (arch == 64 && ELF64_ST_TYPE(data64->st_info) == STT_SECTION)
+		return (true);
 
-		if (data64->st_value > 0 && data64->st_shndx == SHN_UNDEF)
-			return (true);
-		// an absolute symbol can't have a valid address
-	}
-
-	if (arch == 32)
-	{
-		if (ELF32_ST_TYPE(data32->st_info) == STT_SECTION)
-			return (true);
-
-		if (data32->st_value > 0 && data32->st_shndx == SHN_UNDEF)
-			return (true);
-	}
+	if (arch == 32 && ELF32_ST_TYPE(data32->st_info) == STT_SECTION)
+		return (true);
 
 	return (false);
 }
