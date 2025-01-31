@@ -43,6 +43,9 @@ bool	isELF(const char* binary, const long int len)
 	if (binary[1] == 'E' && binary[2] == 'L' && binary[3] == 'F' \
 		&& binary[0] == 0x7F)
 		return (true);
+	
+	if (binary[4] != 0x01 && binary[4] != 0x02)
+		return (false);
 
 	return (false);
 }
@@ -94,9 +97,9 @@ void	getSymbols(tInfos* infos)
 
 		if (value == 0)
 		{
-			if (infos->binary[4] == 2)
+			if (infos->binary[4] == 0x02)
 				value = analyzeBinary(infos, i, 64);
-			else
+			if (infos->binary[4] == 0x01)
 				value = analyzeBinary(infos, i, 32);
 
 			if (value == 1)

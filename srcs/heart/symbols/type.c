@@ -147,10 +147,10 @@ static bool	isInitialized(const char* binary, tSymbols* symbol, int* value, cons
 					|| section->sh_type == SHT_NOTE)
 					return (false);
 
-				// if ((section->sh_flags & SHF_ALLOC) != 0)
-					// return (true);
+				if ((section->sh_flags & SHF_EXECINSTR) != 0)
+					return (false);
 
-				return (false);
+				return (true);
 			}
 		}
 	}
@@ -185,10 +185,10 @@ static bool	isInitialized(const char* binary, tSymbols* symbol, int* value, cons
 					|| section->sh_type == SHT_NOTE)
 					return (false);
 
-				// if ((section->sh_flags & SHF_ALLOC) != 0)
-					// return (true);
+				if ((section->sh_flags & SHF_EXECINSTR) != 0)
+					return (false);
 
-				return (false);
+				return (true);
 			}
 		}
 	}
@@ -456,6 +456,9 @@ char*	getType(const char* binary, tSymbols* symbol, int* value, const int len, c
 	else if (isCommon(symbol, arch) == true)
 		type[0] = 'C';
 
+	else if (isReadMode(binary, symbol, value, len, arch) == true)
+		type[0] = 'R';
+
 	else if (isInitialized(binary, symbol, value, len, arch) == true)
 		type[0] = 'D';
 
@@ -470,9 +473,6 @@ char*	getType(const char* binary, tSymbols* symbol, int* value, const int len, c
 
 	else if (isUndefinedWeak(symbol, arch) == true)
 		type[0] = 'u';
-
-	else if (isReadMode(binary, symbol, value, len, arch) == true)
-		type[0] = 'R';
 
 	else if (isText(binary, symbol, value, len, arch) == true)
 		type[0] = 'T';
