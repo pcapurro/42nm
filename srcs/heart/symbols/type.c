@@ -1,6 +1,6 @@
 #include "../../../include/header.h"
 
-static bool isInvalid(const char* binary, tSymbols* symbol, const int arch)
+static bool isInvalid(tSymbols* symbol, const int arch)
 {
 	Elf64_Sym*	data64 = symbol->data;
 	Elf32_Sym*	data32 = symbol->data;
@@ -49,7 +49,7 @@ static bool	isAbsolute(tSymbols* symbol, const int arch)
 	return (false);
 }
 
-static bool	isBSS(const char* binary, tSymbols* symbol, const int arch)
+static bool	isBSS(const char* binary, tSymbols* symbol, int* value, const int len, const int arch)
 {
 	if (arch == 64)
 	{
@@ -59,9 +59,13 @@ static bool	isBSS(const char* binary, tSymbols* symbol, const int arch)
 		if (data->st_shndx == 0)
 			return (false);
 
-		for (int i = 0; i != header->e_shnum; i++)
+		for (int i = 0, newValue = 0; i != header->e_shnum; i++)
 		{
-			const void*	addr = binary + header->e_shoff + (i * header->e_shentsize);
+			newValue = header->e_shoff + (i * header->e_shentsize);
+			if (newValue <= 0 || newValue >= len)
+				{ *value = 2; return (true); }
+
+			const void*	addr = binary + newValue;
 			Elf64_Shdr*	section = (Elf64_Shdr*)addr;
 
 			if (i == data->st_shndx)
@@ -82,9 +86,13 @@ static bool	isBSS(const char* binary, tSymbols* symbol, const int arch)
 		if (data->st_shndx == 0)
 			return (false);
 
-		for (int i = 0; i != header->e_shnum; i++)
+		for (int i = 0, newValue = 0; i != header->e_shnum; i++)
 		{
-			const void*	addr = binary + header->e_shoff + (i * header->e_shentsize);
+			newValue = header->e_shoff + (i * header->e_shentsize);
+			if (newValue <= 0 || newValue >= len)
+				{ *value = 2; return (true); }
+
+			const void*	addr = binary + newValue;
 			Elf32_Shdr*	section = (Elf32_Shdr*)addr;
 
 			if (i == data->st_shndx)
@@ -114,7 +122,7 @@ static bool	isCommon(tSymbols* symbol, const int arch)
 	return (false);
 }
 
-static bool	isInitialized(const char* binary, tSymbols* symbol, const int arch)
+static bool	isInitialized(const char* binary, tSymbols* symbol, int* value, const int len, const int arch)
 {
 	if (arch == 64)
 	{
@@ -127,9 +135,13 @@ static bool	isInitialized(const char* binary, tSymbols* symbol, const int arch)
 		if (ELF64_ST_BIND(data->st_info) == STB_WEAK)
 			return (false);
 
-		for (int i = 0; i != header->e_shnum; i++)
+		for (int i = 0, newValue = 0; i != header->e_shnum; i++)
 		{
-			const void*	addr = binary + header->e_shoff + (i * header->e_shentsize);
+			newValue = header->e_shoff + (i * header->e_shentsize);
+			if (newValue <= 0 || newValue >= len)
+				{ *value = 2; return (true); }
+
+			const void*	addr = binary + newValue;
 			Elf64_Shdr*	section = (Elf64_Shdr*)addr;
 
 			if (i == data->st_shndx)
@@ -161,9 +173,13 @@ static bool	isInitialized(const char* binary, tSymbols* symbol, const int arch)
 		if (ELF32_ST_BIND(data->st_info) == STB_WEAK)
 			return (false);
 
-		for (int i = 0; i != header->e_shnum; i++)
+		for (int i = 0, newValue = 0; i != header->e_shnum; i++)
 		{
-			const void*	addr = binary + header->e_shoff + (i * header->e_shentsize);
+			newValue = header->e_shoff + (i * header->e_shentsize);
+			if (newValue <= 0 || newValue >= len)
+				{ *value = 2; return (true); }
+
+			const void*	addr = binary + newValue;
 			Elf32_Shdr*	section = (Elf32_Shdr*)addr;
 
 			if (i == data->st_shndx)
@@ -201,16 +217,20 @@ static bool	isIndirect(tSymbols* symbol, const int arch)
 	return (false);
 }
 
-static bool	isReadMode(const char* binary, tSymbols* symbol, const int arch)
+static bool	isReadMode(const char* binary, tSymbols* symbol, int* value, const int len, const int arch)
 {
 	if (arch == 64)
 	{
 		Elf64_Sym*	data = symbol->data;
 		Elf64_Ehdr*	header = (Elf64_Ehdr*) binary;
 
-		for (int i = 0; i != header->e_shnum; i++)
+		for (int i = 0, newValue = 0; i != header->e_shnum; i++)
 		{
-			const void*	addr = binary + header->e_shoff + (i * header->e_shentsize);
+			newValue = header->e_shoff + (i * header->e_shentsize);
+			if (newValue <= 0 || newValue >= len)
+				{ *value = 2; return (true); }
+
+			const void*	addr = binary + newValue;
 			Elf64_Shdr*	section = (Elf64_Shdr*)addr;
 
 			if (i == data->st_shndx)
@@ -229,9 +249,13 @@ static bool	isReadMode(const char* binary, tSymbols* symbol, const int arch)
 		Elf32_Sym*	data = symbol->data;
 		Elf32_Ehdr*	header = (Elf32_Ehdr*) binary;
 
-		for (int i = 0; i != header->e_shnum; i++)
+		for (int i = 0, newValue = 0; i != header->e_shnum; i++)
 		{
-			const void*	addr = binary + header->e_shoff + (i * header->e_shentsize);
+			newValue = header->e_shoff + (i * header->e_shentsize);
+			if (newValue <= 0 || newValue >= len)
+				{ *value = 2; return (true); }
+
+			const void*	addr = binary + newValue;
 			Elf32_Shdr*	section = (Elf32_Shdr*)addr;
 
 			if (i == data->st_shndx)
@@ -248,7 +272,7 @@ static bool	isReadMode(const char* binary, tSymbols* symbol, const int arch)
 	return (false);
 }
 
-static bool	isText(const char* binary, tSymbols* symbol, const int arch)
+static bool	isText(const char* binary, tSymbols* symbol, int* value, const int len, const int arch)
 {
 	if (arch == 64)
 	{
@@ -258,9 +282,13 @@ static bool	isText(const char* binary, tSymbols* symbol, const int arch)
 		if (ELF64_ST_TYPE(data->st_info) == STT_OBJECT)
 			return (false);
 
-		for (int i = 0; i != header->e_shnum; i++)
+		for (int i = 0, newValue = 0; i != header->e_shnum; i++)
 		{
-			const void*	addr = binary + header->e_shoff + (i * header->e_shentsize);
+			newValue = header->e_shoff + (i * header->e_shentsize);
+			if (newValue <= 0 || newValue >= len)
+				{ *value = 2; return (true); }
+
+			const void*	addr = binary + newValue;
 			Elf64_Shdr*	section = (Elf64_Shdr*)addr;
 
 			if (i == data->st_shndx)
@@ -282,9 +310,13 @@ static bool	isText(const char* binary, tSymbols* symbol, const int arch)
 		if (ELF32_ST_TYPE(data->st_info) == STT_OBJECT)
 			return (false);
 
-		for (int i = 0; i != header->e_shnum; i++)
+		for (int i = 0, newValue = 0; i != header->e_shnum; i++)
 		{
-			const void*	addr = binary + header->e_shoff + (i * header->e_shentsize);
+			newValue = header->e_shoff + (i * header->e_shentsize);
+			if (newValue <= 0 || newValue >= len)
+				{ *value = 2; return (true); }
+
+			const void*	addr = binary + newValue;
 			Elf32_Shdr*	section = (Elf32_Shdr*)addr;
 
 			if (i == data->st_shndx)
@@ -399,7 +431,7 @@ static bool	isGlobal(tSymbols* symbol, const int arch)
 
 static bool isLocalOrGlobal(const char type)
 {
-	if (type == '?')
+	if (type == '?' || type == '!')
 		return (false);
 
 	if (type == 'U')
@@ -411,7 +443,7 @@ static bool isLocalOrGlobal(const char type)
 	return (true);
 }
 
-char*	getType(const char* binary, tSymbols* symbol, int* value, const int arch)
+char*	getType(const char* binary, tSymbols* symbol, int* value, const int len, const int arch)
 {
 	char*	type = NULL;
 
@@ -419,19 +451,19 @@ char*	getType(const char* binary, tSymbols* symbol, int* value, const int arch)
 	if (!type)
 		return (NULL);
 
-	if (isInvalid(binary, symbol, arch) == true)
+	if (isInvalid(symbol, arch) == true)
 		type[0] = '!';
 
 	else if (isAbsolute(symbol, arch) == true)
 		type[0] = 'A';
 
-	else if (isBSS(binary, symbol, arch) == true)
+	else if (isBSS(binary, symbol, value, len, arch) == true)
 		type[0] = 'B';
 
 	else if (isCommon(symbol, arch) == true)
 		type[0] = 'C';
 
-	else if (isInitialized(binary, symbol, arch) == true)
+	else if (isInitialized(binary, symbol, value, len, arch) == true)
 		type[0] = 'D';
 
 	else if (isUndefined(symbol, arch) == true)
@@ -446,10 +478,10 @@ char*	getType(const char* binary, tSymbols* symbol, int* value, const int arch)
 	else if (isUndefinedWeak(symbol, arch) == true)
 		type[0] = 'u';
 
-	else if (isReadMode(binary, symbol, arch) == true)
+	else if (isReadMode(binary, symbol, value, len, arch) == true)
 		type[0] = 'R';
 
-	else if (isText(binary, symbol, arch) == true)
+	else if (isText(binary, symbol, value, len, arch) == true)
 		type[0] = 'T';
 
 	else if (isIndirect(symbol, arch) == true)
