@@ -1,6 +1,6 @@
 #include "../../../include/header.h"
 
-int		getTopOrdered(tSymbols* array, const int len)
+static int	getTopOrdered(tSymbols* array, const int len)
 {
 	int	saved = '\0';
 	int	count = 0;

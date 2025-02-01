@@ -2,7 +2,7 @@
 
 void	printHelp(void)
 {
-	writeStr("Usage: ft_nm [option(s)] [file(s)]\n", 1);
+	writeStr("Usage: ./42nm [option(s)] [file(s)]\n", 1);
 	writeStr("List symbols in [file(s)] (a.out by default).\n\n", 1);
 
 	writeStr("The options are:\n", 1);

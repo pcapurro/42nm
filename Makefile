@@ -4,7 +4,7 @@
 
 ## === VARIABLES === ##
 
-NAME = ft_nm
+NAME = 42nm
 
 SRCS = srcs/main.c \
 	srcs/help.c \

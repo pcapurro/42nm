@@ -21,7 +21,7 @@ int	getError(tInfos* infos, const char* message, const int i)
 		return (0);
 	}
 
-	str = getJoin("ft_nm: '", infos->paths[i], "': ");
+	str = getJoin("42nm: '", infos->paths[i], "': ");
 	if (!str)
 		return (1);
 	msg = getJoin(str, error, "\n");
